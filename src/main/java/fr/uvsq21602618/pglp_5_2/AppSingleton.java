@@ -2,10 +2,9 @@ package fr.uvsq21602618.pglp_5_2;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
-//import java.time.LocalDate;
-
-//import fr.uvsq21602618.pglp_5_1_1.Personnel.Builder;
+import fr.uvsq21602618.pglp_5_2.Personnel.Builder;
 /**
  * Singleton contenant le main.
  * @author Nathalie
@@ -31,14 +30,24 @@ public enum AppSingleton {
         NumeroTelephone portable3 =
                 new NumeroTelephone("portable3", "0699999999", 3);
         
-        DAOJDBC<NumeroTelephone> numTelJDBC;
+        /*DAOJDBC<NumeroTelephone> numTelJDBC;
         numTelJDBC = DAOFactoryJDBC.getNumeroTelephoneDAOJDBC();
         numTelJDBC.create(portable);
         numTelJDBC.create(portable2);
         numTelJDBC.delete(portable2);
         numTelJDBC.find(1);
         numTelJDBC.update(portable1maj);
-        numTelJDBC.update(portable3);
+        numTelJDBC.update(portable3);*/
+        
+        DAOJDBC<Personnel> personnel = DAOFactoryJDBC.getPersonnelDAOJDBC();
+        Builder b = new Builder("SMITH", "John", "secrétaire",
+                LocalDate.of(1964, 8, 25), 1);
+        b.numTelephones(portable);
+        b.numTelephones(portable2);
+        b.numTelephones(portable3);
+        Personnel secretaire = b.build();
+        
+        personnel.create(secretaire);
         
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);

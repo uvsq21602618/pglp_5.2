@@ -1,6 +1,5 @@
 package fr.uvsq21602618.pglp_5_2;
 
-import java.io.IOException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,19 +36,24 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
         try {
         creation.executeUpdate("insert into numero_telephone values ("
                 + obj.getId() + ",'" + obj.getDescriptif() +"', '" + obj.getNumero() +"')");
-        }  catch ( org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
-            System.out.println("Cet id a deja était utilisé pour cette table!\n");
-        }
         rs = creation.executeQuery("SELECT * FROM numero_telephone");
         
+        System.out.println("---Table numero_de_telephone:---\n");
+        System.out.println("id\t descriptif\t numero");
         while (rs.next()) { 
             System.out.printf("%d\t%s\t%s\n", rs.getInt("id"),
                     rs.getString("descriptif"), rs.getString("numero"));
           }
+        System.out.println("------------------------------------\n");
         System.out.println("L'objet " + obj.toString() + " a bien été enregistré!\n");
+        rs.close();
+        }  catch ( org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
+            System.out.println("Cet id a deja était utilisé pour"
+                    + " la table numero_de_telephone!\n");
+        }
+        
         creation.close();
         return obj;
-       
     }
     /**
      * Méthode pour effacer.
@@ -78,7 +82,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
                 + " numero from numero_telephone where id="
                 + obj.getId());
         if (!result.next()){
-            System.out.println("Cet identifiant n'a pas encore été utilisé,"
+            System.out.println("Cet identifiant pour numero n'a pas encore été utilisé,"
                     + "il n'y a donc pas de mise a jour possible."); 
             this.create(obj);
         }
@@ -86,7 +90,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
            this.delete(obj);
            this.create(obj);
            System.out.println("La mise à jour du numero d'id " + obj.getId() 
-                + " a été effectué!\n");
+                + " dans la table numero_de_telephone a été effectué!\n");
           }   
         stmt.close();
         return obj;
@@ -107,7 +111,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
                 + " where id=" + id);
         if (rs.next() == false) {
             System.out.println("Il n'y a pas de numero correspondant a l'id"
-                    + id + "!\n");
+                    + id + " dans la table numero_de_telephone!\n");
           }
         String desc = rs.getString("descriptif");
         String num = rs.getString("numero");

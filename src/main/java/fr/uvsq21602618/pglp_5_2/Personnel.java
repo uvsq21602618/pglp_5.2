@@ -237,6 +237,16 @@ public final class Personnel implements Composant, Serializable {
                 + this.fonction + "\ndate de naissance: "
                 + this.dateNaissance + "\n");
     }
+    
+    /**
+     * Méthode pour retourner les infos sous forme de String.
+     * @return les infos de personnel
+     */
+    public String toString() {
+        return (this.nom + " " + this.prenom + ": \nfonction: "
+                + this.fonction + "\ndate de naissance: "
+                + this.dateNaissance + "\n");
+    }
     /**
      * La methode pour mettre a jour l'information.
      */
