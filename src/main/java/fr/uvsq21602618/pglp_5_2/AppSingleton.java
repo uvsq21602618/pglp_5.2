@@ -19,17 +19,27 @@ public enum AppSingleton {
      * Execution du programme.
      * @throws SQLException 
      * @throws IOException 
+     * @throws ClassNotFoundException 
      */
-    public void run() throws IOException, SQLException {
+    public void run() throws IOException, SQLException, ClassNotFoundException {
         NumeroTelephone portable =
-                new NumeroTelephone("portable", "0651624519", 1);
+                new NumeroTelephone("portable", "0751624519", 1);
         NumeroTelephone portable2 =
-                new NumeroTelephone("portable", "0651624519", 2);
+                new NumeroTelephone("portable2", "0651624519", 2);
+        NumeroTelephone portable1maj =
+                new NumeroTelephone("portablemaj", "0851624519", 1);
+        NumeroTelephone portable3 =
+                new NumeroTelephone("portable3", "0699999999", 3);
+        
         DAOJDBC<NumeroTelephone> numTelJDBC;
         numTelJDBC = DAOFactoryJDBC.getNumeroTelephoneDAOJDBC();
         numTelJDBC.create(portable);
         numTelJDBC.create(portable2);
         numTelJDBC.delete(portable2);
+        numTelJDBC.find(1);
+        numTelJDBC.update(portable1maj);
+        numTelJDBC.update(portable3);
+        
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);
         Builder b = new Builder("SMITH", "John", "secrétaire",
@@ -114,10 +124,11 @@ public enum AppSingleton {
     /**
      * Main.
      * @param args pour le main
-     * @throws SQLException 
-     * @throws IOException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     * @throws ClassNotFoundException Exception lié à une classe inexistante
+     * @throws IOException liee aux entreés/sorties
      */
-    public static void main(final String[] args) throws IOException, SQLException {
+    public static void main(final String[] args) throws SQLException, ClassNotFoundException, IOException {
         ENVIRONNEMENT.run();
     }
 }

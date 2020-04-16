@@ -7,6 +7,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
+    /**
+     * Constructeur de NumeroTelephoneDAOJDBC.
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     */
     public NumeroTelephoneDAOJDBC() throws SQLException {
         super();
     }
@@ -34,13 +38,15 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
         creation.executeUpdate("insert into numero_telephone values ("
                 + obj.getId() + ",'" + obj.getDescriptif() +"', '" + obj.getNumero() +"')");
         }  catch ( org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
-            System.out.println("Cet id a deja était utilisé pour cette table!");
+            System.out.println("Cet id a deja était utilisé pour cette table!\n");
         }
         rs = creation.executeQuery("SELECT * FROM numero_telephone");
         
         while (rs.next()) { 
-            System.out.printf("%d\t%s\t%s\n", rs.getInt("id"), rs.getString("descriptif"), rs.getString("numero"));
+            System.out.printf("%d\t%s\t%s\n", rs.getInt("id"),
+                    rs.getString("descriptif"), rs.getString("numero"));
           }
+        System.out.println("L'objet " + obj.toString() + " a bien été enregistré!\n");
         creation.close();
         return obj;
        
@@ -54,7 +60,9 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
         String sql = "delete from numero_telephone where id=" + obj.getId();
         Statement stmt = connect.createStatement();
         stmt.executeUpdate(sql);
-        System.out.printf("Le numero de telephone avec l'id " + obj.getId() + " a bien été supprimé!");
+        stmt.close();
+        System.out.printf("Le numero de telephone avec l'id " + obj.getId() 
+            + " a bien été supprimé!\n");
     }
     /**
      * Méthode de mise à jour.
@@ -68,8 +76,8 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
         ResultSet result = null;           
         result = stmt.executeQuery("select descriptif,"
                 + " numero from numero_telephone where id="
-                + obj.getId() + ";");
-        if (!result.isBeforeFirst()){
+                + obj.getId());
+        if (!result.next()){
             System.out.println("Cet identifiant n'a pas encore été utilisé,"
                     + "il n'y a donc pas de mise a jour possible."); 
             this.create(obj);
@@ -78,9 +86,9 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
            this.delete(obj);
            this.create(obj);
            System.out.println("La mise à jour du numero d'id " + obj.getId() 
-                + " a été effectué!");
+                + " a été effectué!\n");
           }   
-
+        stmt.close();
         return obj;
     }
     /**
@@ -88,6 +96,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @param id de l'information
      * @return  une instance de NumeroTelephone qu'on a cherchee, null sinon
      * @throws SQLException Exception liee a l'acces a la base de donnees
+     * @throws ClassNotFoundException Exception lié à une classe inexistante
      */
     public NumeroTelephone find(final int id) throws SQLException {
         NumeroTelephone search;
@@ -95,11 +104,17 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
         ResultSet rs = null;           
         rs = stmt.executeQuery("select descriptif,"
                 + " numero from numero_telephone"
-                + " where id=" + id + ";");
+                + " where id=" + id);
+        if (rs.next() == false) {
+            System.out.println("Il n'y a pas de numero correspondant a l'id"
+                    + id + "!\n");
+          }
         String desc = rs.getString("descriptif");
         String num = rs.getString("numero");
         search = new NumeroTelephone(desc, num, id);
-        
+        System.out.println(search.toString()+ "\n");
+       
+        stmt.close();
         return search;
         
     }
