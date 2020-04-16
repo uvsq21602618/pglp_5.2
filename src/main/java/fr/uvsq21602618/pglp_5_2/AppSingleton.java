@@ -1,5 +1,8 @@
 package fr.uvsq21602618.pglp_5_2;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 //import java.time.LocalDate;
 
 //import fr.uvsq21602618.pglp_5_1_1.Personnel.Builder;
@@ -14,8 +17,19 @@ public enum AppSingleton {
     ENVIRONNEMENT;
     /**
      * Execution du programme.
+     * @throws SQLException 
+     * @throws IOException 
      */
-    public void run() {
+    public void run() throws IOException, SQLException {
+        NumeroTelephone portable =
+                new NumeroTelephone("portable", "0651624519", 1);
+        NumeroTelephone portable2 =
+                new NumeroTelephone("portable", "0651624519", 2);
+        DAOJDBC<NumeroTelephone> numTelJDBC;
+        numTelJDBC = DAOFactoryJDBC.getNumeroTelephoneDAOJDBC();
+        numTelJDBC.create(portable);
+        numTelJDBC.create(portable2);
+        numTelJDBC.delete(portable2);
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);
         Builder b = new Builder("SMITH", "John", "secrétaire",
@@ -100,8 +114,10 @@ public enum AppSingleton {
     /**
      * Main.
      * @param args pour le main
+     * @throws SQLException 
+     * @throws IOException 
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException, SQLException {
         ENVIRONNEMENT.run();
     }
 }

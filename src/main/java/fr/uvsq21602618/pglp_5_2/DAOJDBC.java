@@ -20,27 +20,35 @@ public abstract class DAOJDBC<T> {
     
     public DAOJDBC() throws SQLException {
         dbUrl = "jdbc:derby:donneesPourDB\\jdbcDB;create=true";
-        connect = DriverManager.getConnection(dbUrl);
+        
+        try {
+            connect = DriverManager.getConnection(dbUrl);
+        } catch(SQLException e) {
+            e.printStackTrace();
+        }
     }
     /**
      * Méthode de création.
      * @param obj L'objet à créer
      * @return T une classe donnée
      * @throws IOException Exceptions liées aux entrées/sorties
+     * @throws SQLException 
      */
-    public abstract T create(T obj) throws IOException;
+    public abstract T create(T obj) throws IOException, SQLException;
     /**
      * Méthode pour effacer.
      * @param obj l'objet à supprimer
+     * @throws SQLException 
      */
-    public abstract void delete(T obj);
+    public abstract void delete(T obj) throws SQLException;
     /**
      * Méthode de mise à jour.
      * @param obj L'objet à mettre à jour
      * @throws IOException Exception liee aux entrees/sorties
      * @return T une instance de la classe donnée
+     * @throws SQLException 
      */
-    public abstract T update(T obj) throws IOException;
+    public abstract T update(T obj) throws IOException, SQLException;
     /**
      * Méthode de recherche des informations.
      * @param id de l'information
