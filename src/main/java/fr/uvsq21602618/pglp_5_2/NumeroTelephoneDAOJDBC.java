@@ -127,6 +127,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
         String desc = rs.getString("descriptif");
         String num = rs.getString("numero");
         search = new NumeroTelephone(desc, num, id);
+        System.out.println("Le numero suivant a ete trouve avec l'identifiant " + id + ":");
         System.out.println(search.toString()+ "\n");
        
         stmt.close();

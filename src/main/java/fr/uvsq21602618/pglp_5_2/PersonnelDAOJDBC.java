@@ -5,6 +5,9 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+
+import fr.uvsq21602618.pglp_5_2.Personnel.Builder;
 /**
  * Classe de PersonnelDAOJDBC.
  * @author Nathalie
@@ -112,8 +115,26 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
      * @param obj L'objet à mettre à jour
      * @throws IOException Exceptions liees aux entrees/sorties
      * @return obj L'objet à mettre à jour
+     * @throws SQLException 
      */
-    public Personnel update(final Personnel obj) {
+    public Personnel update(final Personnel obj) throws SQLException, IOException {
+        Statement stmt = connect.createStatement();
+        ResultSet result = null;           
+        result = stmt.executeQuery("select *"
+                + "from personnel where id="
+                + obj.getId());
+        if (!result.next()){
+            System.out.println("Cet identifiant pour personnel n'a pas encore été utilisé,"
+                    + "il n'y a donc pas de mise a jour possible."); 
+            this.create(obj);
+        }
+       else{
+           this.delete(obj);
+           this.create(obj);
+           System.out.println("La mise à jour du personnel d'id " + obj.getId() 
+                + " dans la table personnel a été effectué!\n");
+          }   
+        stmt.close();
         return obj;
            
     }
@@ -121,11 +142,36 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
      * Méthode de recherche des informations.
      * @param id de l'information
      * @return  le GroupePersonnel du fichier, null sinon
+     * @throws SQLException 
      * @throws IOException liee aux entreés/sorties
      * @throws ClassNotFoundException Exception lié à une classe inexistante
      */
-    public Personnel find(final int id) {
-                return null;
+    public Personnel find(final int id) throws SQLException {
+        Personnel search = null;
+        Statement stmt = connect.createStatement();
+        ResultSet rs = null;           
+        rs = stmt.executeQuery("select *"
+                + "from personnel"
+                + " where id=" + id);
+        if (rs.next() == false) {
+            System.out.println("Il n'y a pas de personnel correspondant a l'id"
+                    + id + " dans la table personnel!\n");
+          }
+        String nom = rs.getString("nom");
+        String prenom = rs.getString("prenom");
+        String fonction = rs.getString("fonction");
+        String date = rs.getString("date_de_naissance");
+        String[] tab = date.split("-");
+        LocalDate lDate = LocalDate.of(Integer.parseInt(tab[0]),
+                Integer.parseInt(tab[1]), Integer.parseInt(tab[2]));
+        Builder b = new Builder(nom, prenom, fonction,
+                lDate, id);
+        search = b.build();
+        System.out.println("Le personnel suivant a ete trouve avec l'identifiant " + id + ":");
+        System.out.println(search.toString()+ "\n");
+       
+        stmt.close();
+        return search;
         
     }
     

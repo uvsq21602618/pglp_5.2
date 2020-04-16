@@ -89,19 +89,19 @@ public final class Personnel implements Composant, Serializable {
     /**
      * Nom du personnel.
      */
-    private final String nom;
+    private String nom;
     /**
      * Prenom du personnel.
      */
-    private final String prenom;
+    private String prenom;
     /**
      * Fonction du personnel.
      */
-    private final String fonction;
+    private String fonction;
     /**
      * Date de naissance du personnel.
      */
-    private final LocalDate dateNaissance;
+    private LocalDate dateNaissance;
     /**
      * Liste de numéros de téléphones avec descriptif.
      */
@@ -237,7 +237,34 @@ public final class Personnel implements Composant, Serializable {
                 + this.fonction + "\ndate de naissance: "
                 + this.dateNaissance + "\n");
     }
-    
+    /**
+     * Methode pour definir le nom du personnel.
+     * @param nom2 le nom 
+     */
+    public void setNom(final String nom2) {
+        this.nom = nom2;
+    }
+    /**
+     * Methode pour definir le prenom du personnel.
+     * @param prenom2 le prenom 
+     */
+    public void setPrenom(final String prenom2) {
+        this.prenom = prenom2;
+    }
+    /**
+     * Methode pour definir la fonction du personnel.
+     * @param fonction2 la fonction
+     */
+    public void setFonction(final String fonction2) {
+        this.fonction = fonction2;
+    }
+    /**
+     * Methode pour definir la date de naissance de personnel.
+     * @param date2 la date de naissance
+     */
+    public void setNaissance(final LocalDate date2) {
+        this.dateNaissance = date2;
+    }
     /**
      * Méthode pour retourner les infos sous forme de String.
      * @return les infos de personnel
