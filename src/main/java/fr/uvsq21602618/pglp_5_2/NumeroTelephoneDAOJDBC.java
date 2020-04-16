@@ -14,8 +14,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * Méthode de création.
      * @param obj L'objet à créer
      * @return obj qui vient d'etre cree
-     * @throws SQLException 
-     * @throws IOException Exceptions liees aux entrees/sorties
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public NumeroTelephone create(final NumeroTelephone obj) throws SQLException {
         
@@ -49,7 +48,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
     /**
      * Méthode pour effacer.
      * @param obj L'objet à effacer
-     * @throws SQLException 
+     * @throws SQLException  Exception liee a l'acces a la base de donnees
      */
     public void delete(final NumeroTelephone obj) throws SQLException {
         String sql = "delete from numero_telephone where id=" + obj.getId();
@@ -61,14 +60,15 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * Méthode de mise à jour.
      * On met a jour l'objet base sur son id.
      * @param obj L'objet à mettre à jour
-     * @throws IOException Exceptions liees aux entrees/sorties
      * @return obj L'objet à mettre à jour
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public NumeroTelephone update(final NumeroTelephone obj) throws SQLException {
         Statement stmt = connect.createStatement();
         ResultSet result = null;           
-        result = stmt.executeQuery("select descriptif, numero from numero_telephone where id=2;");
+        result = stmt.executeQuery("select descriptif,"
+                + " numero from numero_telephone where id="
+                + obj.getId() + ";");
         if (!result.isBeforeFirst()){
             System.out.println("Cet identifiant n'a pas encore été utilisé,"
                     + "il n'y a donc pas de mise a jour possible."); 
@@ -78,7 +78,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
            this.delete(obj);
            this.create(obj);
            System.out.println("La mise à jour du numero d'id " + obj.getId() 
-                   + " a été effectué!");
+                + " a été effectué!");
           }   
 
         return obj;
@@ -86,18 +86,21 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
     /**
      * Méthode de recherche des informations.
      * @param id de l'information
-     * @return  le GroupePersonnel du fichier, null sinon
-     * @throws SQLException 
-     * @throws IOException liee aux entreés/sorties
-     * @throws ClassNotFoundException Exception lié à une classe inexistante
+     * @return  une instance de NumeroTelephone qu'on a cherchee, null sinon
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public NumeroTelephone find(final int id) throws SQLException {
         NumeroTelephone search;
         Statement stmt = connect.createStatement();
-        ResultSet result = null;           
-        result = stmt.executeQuery("select descriptif, numero from numero_telephone where id=2;");
+        ResultSet rs = null;           
+        rs = stmt.executeQuery("select descriptif,"
+                + " numero from numero_telephone"
+                + " where id=" + id + ";");
+        String desc = rs.getString("descriptif");
+        String num = rs.getString("numero");
+        search = new NumeroTelephone(desc, num, id);
         
-        return null;
+        return search;
         
     }
 }
