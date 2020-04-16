@@ -48,6 +48,7 @@ public enum AppSingleton {
         Personnel secretaire = b.build();
         
         personnel.create(secretaire);
+        personnel.delete(secretaire);
         
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);

@@ -79,9 +79,33 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
     /**
      * Méthode pour effacer.
      * @param obj L'objet à effacer
+     * @throws SQLException 
      */
-    public void delete(final Personnel obj) {
-   
+    public void delete(final Personnel obj) throws SQLException {
+        Statement stmt = connect.createStatement();
+        Statement stmt2 = connect.createStatement();
+        int idNum, idPerso;
+        idPerso = obj.getId();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM correspondance WHERE"
+                + " id_personnel=" + idPerso);
+        String sql;
+  
+        while (rs.next()) {
+                idNum = rs.getInt("id_numero");
+                sql = "delete from correspondance where id_personnel=" + idPerso
+                        + "and id_numero=" + idNum;
+                stmt2.executeUpdate(sql);
+                sql = "delete from numero_telephone where id=" + idNum;
+                stmt2.executeUpdate(sql);
+                System.out.printf("Le numero avec l'id " + idNum 
+                + " a bien été supprimé!\n");
+        }
+        sql = "delete from personnel where id=" + obj.getId();
+        stmt2.executeUpdate(sql);
+        stmt.close();
+        stmt2.close();
+        System.out.printf("Le personnel avec l'id " + obj.getId() 
+            + " et les correspondances associées ont bien été supprimé!\n");
     }
     /**
      * Méthode de mise à jour.
@@ -113,6 +137,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     private void correspondance(final int idPerso, final int idNum) throws SQLException {
+        
         DatabaseMetaData dbmd = connect.getMetaData();
         ResultSet rs = dbmd.getTables(null, null, "correspondance".toUpperCase(), null); 
         Statement stmt = null;

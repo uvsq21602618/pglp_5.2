@@ -38,7 +38,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
                 + obj.getId() + ",'" + obj.getDescriptif() +"', '" + obj.getNumero() +"')");
         rs = creation.executeQuery("SELECT * FROM numero_telephone");
         
-        System.out.println("---Table numero_de_telephone:---\n");
+        System.out.println("---Table numero_telephone:---\n");
         System.out.println("id\t descriptif\t numero");
         while (rs.next()) { 
             System.out.printf("%d\t%s\t%s\n", rs.getInt("id"),
@@ -60,13 +60,24 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @param obj L'objet à effacer
      * @throws SQLException  Exception liee a l'acces a la base de donnees
      */
-    public void delete(final NumeroTelephone obj) throws SQLException {
-        String sql = "delete from numero_telephone where id=" + obj.getId();
+    public void delete(final NumeroTelephone obj) throws SQLException { 
+        ResultSet rs = null;  
         Statement stmt = connect.createStatement();
-        stmt.executeUpdate(sql);
-        stmt.close();
-        System.out.printf("Le numero de telephone avec l'id " + obj.getId() 
+        rs = stmt.executeQuery("select id"
+                + " from numero_telephone where id="
+                + obj.getId());
+        
+        if (!rs.next()){
+            System.out.println("Cet identifiant pour numero n'a pas encore été utilisé,"
+                    + "il n'y a donc pas de suppression possible."); 
+        } else {
+            String sql = "delete from numero_telephone where id=" + obj.getId();
+            stmt.executeUpdate(sql);
+            System.out.printf("Le numero de telephone avec l'id " + obj.getId() 
             + " a bien été supprimé!\n");
+        }
+        stmt.close();
+        
     }
     /**
      * Méthode de mise à jour.
