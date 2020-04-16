@@ -59,6 +59,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
     }
     /**
      * Méthode de mise à jour.
+     * On met a jour l'objet base sur son id.
      * @param obj L'objet à mettre à jour
      * @throws IOException Exceptions liees aux entrees/sorties
      * @return obj L'objet à mettre à jour
@@ -66,19 +67,37 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      */
     public NumeroTelephone update(final NumeroTelephone obj) throws SQLException {
         Statement stmt = connect.createStatement();
-        
+        ResultSet result = null;           
+        result = stmt.executeQuery("select descriptif, numero from numero_telephone where id=2;");
+        if (!result.isBeforeFirst()){
+            System.out.println("Cet identifiant n'a pas encore été utilisé,"
+                    + "il n'y a donc pas de mise a jour possible."); 
+            this.create(obj);
+        }
+       else{
+           this.delete(obj);
+           this.create(obj);
+           System.out.println("La mise à jour du numero d'id " + obj.getId() 
+                   + " a été effectué!");
+          }   
+
         return obj;
-           
     }
     /**
      * Méthode de recherche des informations.
      * @param id de l'information
      * @return  le GroupePersonnel du fichier, null sinon
+     * @throws SQLException 
      * @throws IOException liee aux entreés/sorties
      * @throws ClassNotFoundException Exception lié à une classe inexistante
      */
-    public NumeroTelephone find(final int id) {
-                return null;
+    public NumeroTelephone find(final int id) throws SQLException {
+        NumeroTelephone search;
+        Statement stmt = connect.createStatement();
+        ResultSet result = null;           
+        result = stmt.executeQuery("select descriptif, numero from numero_telephone where id=2;");
+        
+        return null;
         
     }
 }

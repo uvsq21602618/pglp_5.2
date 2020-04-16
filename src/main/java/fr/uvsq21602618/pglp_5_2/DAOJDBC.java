@@ -56,9 +56,10 @@ public abstract class DAOJDBC<T> {
      * @throws FileNotFoundException Exception si le fichier n'existe pas
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     public abstract T find(int id) throws FileNotFoundException,
-    ClassNotFoundException, IOException;
+    ClassNotFoundException, IOException, SQLException;
     /**
      * Méthode de désérialisation.
      * @param bytes le tableau d'octets à transformer en objet.
