@@ -53,7 +53,8 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
             System.out.println("------------------------------------\n");
             System.out.println("L'objet " + obj.toString() + " a bien été enregistré!\n");
             rs.close();
-        }  catch ( org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
+        }  catch ( org.apache.derby.shared.common.error
+                .DerbySQLIntegrityConstraintViolationException e) {
             System.out.println("Cet id a deja était utilisé pour"
                     + " la table numero_de_telephone!\n");
         }
@@ -130,6 +131,7 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
         if (rs.next() == false) {
             System.out.println("Il n'y a pas de numero correspondant a l'id"
                     + id + " dans la table numero_de_telephone!\n");
+            return null;
         }
         String desc = rs.getString("descriptif");
         String num = rs.getString("numero");

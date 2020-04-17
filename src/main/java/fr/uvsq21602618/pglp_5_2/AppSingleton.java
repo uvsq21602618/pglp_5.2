@@ -76,7 +76,11 @@ public enum AppSingleton {
 
         grPersoJDBC.create(departement);
         grPersoJDBC.delete(service);
+        grPersoJDBC.create(service);
+        grPersoJDBC.find(3);
+
         ((GroupePersonnelsDAOJDBC) grPersoJDBC).affichage_table_GroupePersonnels();
+
 
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);

@@ -1,5 +1,6 @@
 package fr.uvsq21602618.pglp_5_2;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -71,7 +72,8 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
             }
 
             System.out.println("L'objet " + obj.toString() + "a bien été enregistré!\n\n");
-        } catch (org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
+        } catch (org.apache.derby.shared.common.error
+                .DerbySQLIntegrityConstraintViolationException e) {
             System.out.println("Cet id a deja était utilisé pour la table personnel!\n");
         }
         creation.close();
@@ -101,6 +103,10 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
             System.out.printf("Le numero avec l'id " + idNum 
                     + " a bien été supprimé!\n");
         }
+        sql = "delete from appartenance_personnel where id=" + obj.getId();
+        stmt2.executeUpdate(sql);
+        sql = "delete from appartenance_sous_groupe where id=" + obj.getId();
+        stmt2.executeUpdate(sql);
         sql = "delete from personnel where id=" + obj.getId();
         stmt2.executeUpdate(sql);
         stmt.close();
@@ -141,12 +147,15 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
      * @param id de l'information
      * @return  le GroupePersonnel du fichier, null sinon
      * @throws SQLException Exception liee a l'acces a la base de donnees 
+     * @throws FileNotFoundException liee au fichier non trouve
      * @throws IOException liee aux entreés/sorties
      * @throws ClassNotFoundException Exception lié à une classe inexistante
      */
-    public Personnel find(final int id) throws SQLException {
+    public Personnel find(final int id) throws SQLException,
+    FileNotFoundException, ClassNotFoundException, IOException {
         Personnel search = null;
         Statement stmt = connect.createStatement();
+        Statement stmt2 = connect.createStatement();
         ResultSet rs = null;           
         rs = stmt.executeQuery("select *"
                 + "from personnel"
@@ -154,6 +163,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
         if (rs.next() == false) {
             System.out.println("Il n'y a pas de personnel correspondant a l'id"
                     + id + " dans la table personnel!\n");
+            return null;
         }
         String nom = rs.getString("nom");
         String prenom = rs.getString("prenom");
@@ -165,9 +175,23 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
         Builder b = new Builder(nom, prenom, fonction,
                 lDate, id);
         search = b.build();
+        
+        int idNum;
+        NumeroTelephone numTel;
+        rs = stmt.executeQuery("select * from correspondance"
+                + " where id_personnel=" + id);
+        while (rs.next()) {
+            idNum = rs.getInt("id_numero");
+            numTel = PersonnelDAOJDBC.numTelJDBC.find(idNum);
+            if (numTel != null) {
+                b.numTelephones(numTel);
+            }
+        }
+        
         System.out.println("Le personnel suivant a ete trouve avec l'identifiant " + id + ":");
         System.out.println(search.toString()+ "\n");
-
+        
+        rs.close();
         stmt.close();
         return search;
 

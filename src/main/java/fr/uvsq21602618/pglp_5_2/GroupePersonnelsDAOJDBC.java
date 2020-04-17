@@ -1,10 +1,14 @@
 package fr.uvsq21602618.pglp_5_2;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+
+import fr.uvsq21602618.pglp_5_2.Personnel.Builder;
 /**
  * Classe de GroupePersonnelsDAOJDBC. 
  * @author Nathalie
@@ -113,7 +117,8 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      * @return obj L'objet à mettre à jour
      */
-    public GroupePersonnels update(final GroupePersonnels obj) throws SQLException, IOException {
+    public GroupePersonnels update(final GroupePersonnels obj) throws SQLException,
+    IOException {
         Statement stmt = connect.createStatement();
         ResultSet result = null;           
         result = stmt.executeQuery("select *"
@@ -138,11 +143,54 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * Méthode de recherche des informations.
      * @param id de l'information
      * @return gp le GroupePersonnel du fichier, null sinon
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     * @throws FileNotFoundException liee au fichier non trouve
      * @throws IOException liee aux entreés/sorties
      * @throws ClassNotFoundException Exception lié à une classe inexistante
      */
-    public GroupePersonnels find(final int id) {
-        return null;
+    public GroupePersonnels find(final int id) throws SQLException,
+    FileNotFoundException, ClassNotFoundException, IOException {
+        GroupePersonnels search = null;
+        Statement stmt = connect.createStatement();
+        ResultSet rs = null;           
+        rs = stmt.executeQuery("select *"
+                + "from groupe_personnels"
+                + " where id=" + id);
+        if (rs.next() == false) {
+            System.out.println("Il n'y a pas de groupe de personnels correspondant a l'id"
+                    + id + " dans la table groupe_personnels!\n");
+            return null;
+        }
+        String nomGroupe = rs.getString("nom_groupe");
+        search = new GroupePersonnels(nomGroupe, id);
+        Personnel p;
+        GroupePersonnels gp;
+        int idComp;
+        
+        rs = stmt.executeQuery("select * from appartenance_personnel"
+                + " where id_groupe= " + id);
+        while (rs.next()) {
+            idComp = rs.getInt("id_personnel");
+            p = GroupePersonnelsDAOJDBC.persoJDBC.find(idComp);
+            if (p != null) {
+                search.add(p);
+            }
+        }
+        
+        rs = stmt.executeQuery("select * from appartenance_sous_groupe"
+                + " where id_groupe= " + id);
+        while (rs.next()) {
+            idComp = rs.getInt("id_sousGroupe");
+            gp = this.find(idComp);
+            if (gp != null) {
+                search.add(gp);
+            }
+        }
+        System.out.println("Le groupe suivant a ete trouve avec l'identifiant " + id + ":");
+        System.out.println(search.toString()+ "\n");
+
+        stmt.close();
+        return search;
 
     }
     /**
