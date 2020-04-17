@@ -25,7 +25,8 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      * @throws IOException Exceptions liees aux entrees/sorties
      */
-    public NumeroTelephone create(final NumeroTelephone obj) throws SQLException {       
+    public NumeroTelephone create(final NumeroTelephone obj) throws SQLException {
+        
         DatabaseMetaData dbmd = connect.getMetaData();
         ResultSet rs = dbmd.getTables(null, null, "numero_telephone".toUpperCase(), null); 
         Statement creation = null;

@@ -37,28 +37,24 @@ public class GroupePersonnels implements Composant, Serializable {
         this.setId(id2);
     }
     /**
-     * Méthode qui récupère le nom du groupe.
-     * @return le nom du groupe
-     */
-    public String getName() {
-        return this.nomGroupe;
-    }
-    /**
      * Méthode qui affiche le nom de chaque composant.
      */
     public void print() {
-        System.out.println("-------" + this.getName() + "-------");
+        System.out.println("-------" + this.getNomGroupe() + "-------");
         for (Composant composant: children) {
             composant.print();
         }
     }
     /**
-     * Méthode qui retourne la liste des composants du groupe.
-     * Cette liste ne peut être modifiée.
-     * @return la liste des composants non modifiable
+     * Méthode pour retourne en string les informations.
      */
-    public List<Composant> getList() {
-        return Collections.unmodifiableList(children);
+    public String toString() {
+        String str;
+        str = ("-------" + this.getNomGroupe() + "-------\n");
+        for (Composant composant: children) {
+            str = str + composant.toString() + "\n";
+        }
+        return str;
     }
     /**
      * Méthode qui ajoute un composant au groupe.
@@ -80,7 +76,7 @@ public class GroupePersonnels implements Composant, Serializable {
      */
     public void hierarchie() {
         Iterator<Composant> ite = children.iterator();
-        System.out.println("-------" + this.getName() + "-------");
+        System.out.println("-------" + this.getNomGroupe() + "-------");
         while (ite.hasNext()) {
             Composant c = ite.next();
             c.print();

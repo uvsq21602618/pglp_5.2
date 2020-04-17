@@ -47,9 +47,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
                     + " (id int primary key, nom varchar(30),"
                     + " prenom varchar(30), fonction varchar(30),"
                     + "date_de_naissance varchar(30))");
-        }
-          
-        try {
+        } try {
         creation.executeUpdate("insert into personnel values ("
                 + obj.getId() + ",'" + obj.getNom() +"', '" 
                 + obj.getPrenom() +"','" + obj.getFonction() +"', '" 
@@ -213,7 +211,8 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
         rs.close(); 
         stmt.close();
         }  catch ( org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
-            System.out.println("Cet id a deja était utilisé pour la table personnel!\n");
+            System.out.println("Cet id a deja était utilisé pour "
+                    + "la table correspondance!\n");
         }
     }
 }

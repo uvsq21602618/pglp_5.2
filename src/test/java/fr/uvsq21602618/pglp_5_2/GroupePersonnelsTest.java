@@ -63,7 +63,7 @@ public class GroupePersonnelsTest {
     public void addTest() {
 
         g.add(g2);
-        assertEquals(g.getList().get(0), g2);
+        assertEquals(g.getChildren().get(0), g2);
     }
     /**
      * Test de la méthode remove.
@@ -73,7 +73,7 @@ public class GroupePersonnelsTest {
         g.add(g2);
         g.add(g3);
         g.remove(g2);
-        assertEquals(g.getList().get(0), g3);
+        assertEquals(g.getChildren().get(0), g3);
     }
     /**
      * Méthode de désérialisation.

@@ -35,7 +35,7 @@ public class DAOFactoryJDBC {
      * @throws IOException Exceptions liees aux entrees/sorties
      * @throws SQLException 
      */
-    public static DAOJDBC<GroupePersonnels> getGroupePersonnelsDAO()
+    public static DAOJDBC<GroupePersonnels> getGroupePersonnelsDAOJDBC()
             throws IOException, SQLException {
         return new GroupePersonnelsDAOJDBC();
     }
