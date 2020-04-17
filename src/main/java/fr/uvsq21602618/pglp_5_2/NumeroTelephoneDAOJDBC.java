@@ -1,10 +1,15 @@
 package fr.uvsq21602618.pglp_5_2;
 
+import java.io.IOException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+/**
+ * Classe de NumeroTelephoneDAOJDBC. 
+ * @author Nathalie
+ *
+ */
 public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
     /**
      * Constructeur de NumeroTelephoneDAOJDBC.
@@ -18,9 +23,9 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @param obj L'objet à créer
      * @return obj qui vient d'etre cree
      * @throws SQLException Exception liee a l'acces a la base de donnees
+     * @throws IOException Exceptions liees aux entrees/sorties
      */
-    public NumeroTelephone create(final NumeroTelephone obj) throws SQLException {
-        
+    public NumeroTelephone create(final NumeroTelephone obj) throws SQLException {       
         DatabaseMetaData dbmd = connect.getMetaData();
         ResultSet rs = dbmd.getTables(null, null, "numero_telephone".toUpperCase(), null); 
         Statement creation = null;
@@ -111,7 +116,6 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @param id de l'information
      * @return  une instance de NumeroTelephone qu'on a cherchee, null sinon
      * @throws SQLException Exception liee a l'acces a la base de donnees
-     * @throws ClassNotFoundException Exception lié à une classe inexistante
      */
     public NumeroTelephone find(final int id) throws SQLException {
         NumeroTelephone search;

@@ -2,7 +2,11 @@ package fr.uvsq21602618.pglp_5_2;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
+/**
+ * Classe de GroupePersonnelsDAOJDBC. 
+ * @author Nathalie
+ *
+ */
 public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
     public GroupePersonnelsDAOJDBC() throws SQLException {
         super();
@@ -15,7 +19,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      */
     public GroupePersonnels create(final GroupePersonnels obj) {
         return obj;
-       
+ 
     }
     /**
      * Méthode pour effacer.

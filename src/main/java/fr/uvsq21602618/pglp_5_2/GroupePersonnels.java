@@ -147,6 +147,20 @@ public class GroupePersonnels implements Composant, Serializable {
         this.id = id2;
     }
     /**
+     * Méthode qui recupere le nom du groupe.
+     * @return nom du groupe
+     */
+    public String getNomGroupe() {
+        return this.nomGroupe;
+    }
+    /**
+     * Méthode qui recupere les composants du groupe.
+     * @return en lecture seulement children
+     */
+    public List<Composant> getChildren() {
+        return Collections.unmodifiableList(this.children); 
+    }
+    /**
      * Méthode pour la mise à jour.
      */
     public void maj() {

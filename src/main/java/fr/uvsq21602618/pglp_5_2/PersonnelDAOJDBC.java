@@ -31,7 +31,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
      * Méthode de création.
      * @param obj L'objet à créer
      * @return obj qui vient d'etre cree
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      * @throws IOException Exceptions liees aux entrees/sorties
      */
     public Personnel create(final Personnel obj) throws SQLException,
@@ -82,7 +82,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
     /**
      * Méthode pour effacer.
      * @param obj L'objet à effacer
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public void delete(final Personnel obj) throws SQLException {
         Statement stmt = connect.createStatement();
@@ -112,10 +112,10 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
     }
     /**
      * Méthode de mise à jour.
-     * @param obj L'objet à mettre à jour
+     * @param obj L'objet à créer
+     * @return obj qui vient d'etre cree
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      * @throws IOException Exceptions liees aux entrees/sorties
-     * @return obj L'objet à mettre à jour
-     * @throws SQLException 
      */
     public Personnel update(final Personnel obj) throws SQLException, IOException {
         Statement stmt = connect.createStatement();
@@ -142,7 +142,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
      * Méthode de recherche des informations.
      * @param id de l'information
      * @return  le GroupePersonnel du fichier, null sinon
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees 
      * @throws IOException liee aux entreés/sorties
      * @throws ClassNotFoundException Exception lié à une classe inexistante
      */
