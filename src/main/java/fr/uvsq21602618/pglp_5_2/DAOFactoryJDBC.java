@@ -9,7 +9,7 @@ public class DAOFactoryJDBC {
      */
     private DAOFactoryJDBC() {
         throw new IllegalStateException("Utility class");
-      }
+    }
     /**
      * Méthode pour récuperer le DAO de NumeroTelephone.
      * @return le DAO correspondant

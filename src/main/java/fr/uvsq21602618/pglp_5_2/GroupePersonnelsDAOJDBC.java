@@ -93,10 +93,10 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
 
         sql = "delete from appartenance_personnel where id_groupe=" + idGroupe;
         stmt.executeUpdate(sql);     
-        
+
         sql = "delete from appartenance_sous_groupe where id_groupe=" + idGroupe;
         stmt.executeUpdate(sql);
-        
+
         sql = "delete from appartenance_sous_groupe where id_sousGroupe=" + idGroupe;
         stmt.executeUpdate(sql);
 
@@ -110,9 +110,27 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * Méthode de mise à jour.
      * @param obj L'objet à mettre à jour
      * @throws IOException Exceptions liees aux entrees/sorties
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      * @return obj L'objet à mettre à jour
      */
-    public GroupePersonnels update(final GroupePersonnels obj) {
+    public GroupePersonnels update(final GroupePersonnels obj) throws SQLException, IOException {
+        Statement stmt = connect.createStatement();
+        ResultSet result = null;           
+        result = stmt.executeQuery("select *"
+                + "from groupe_personnels where id="
+                + obj.getId());
+        if (!result.next()){
+            System.out.println("Cet identifiant pour groupe n'a pas encore été utilisé,"
+                    + "il n'y a donc pas de mise a jour possible."); 
+            this.create(obj);
+        }
+        else {
+            this.delete(obj);
+            this.create(obj);
+            System.out.println("La mise à jour du groupe d'id " + obj.getId() 
+            + " dans la table groupe_personnels a été effectué!\n");
+        }   
+        stmt.close();
         return obj;
 
     }

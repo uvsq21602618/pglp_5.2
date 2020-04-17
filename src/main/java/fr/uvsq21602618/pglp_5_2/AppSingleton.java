@@ -29,7 +29,7 @@ public enum AppSingleton {
                 new NumeroTelephone("portablemaj", "0851624519", 1);
         NumeroTelephone portable3 =
                 new NumeroTelephone("portable3", "0699999999", 3);*/
-        
+
         /*DAOJDBC<NumeroTelephone> numTelJDBC;
         numTelJDBC = DAOFactoryJDBC.getNumeroTelephoneDAOJDBC();
         numTelJDBC.create(portable);
@@ -38,7 +38,7 @@ public enum AppSingleton {
         numTelJDBC.find(1);
         numTelJDBC.update(portable1maj);
         numTelJDBC.update(portable3);*/
-        
+
         /*DAOJDBC<Personnel> personnel = DAOFactoryJDBC.getPersonnelDAOJDBC();
         Builder b = new Builder("SMITH", "John", "secrétaire",
                 LocalDate.of(1964, 8, 25), 1);
@@ -46,12 +46,12 @@ public enum AppSingleton {
         b.numTelephones(portable2);
         b.numTelephones(portable3);
         Personnel secretaire = b.build();
-        
+
         personnel.create(secretaire);
         personnel.delete(secretaire);
         personnel.create(secretaire);
         personnel.find(1);*/
-        
+
         NumeroTelephone portable =
                 new NumeroTelephone("portable", "0751624519", 1);
         Builder b = new Builder("SMITH", "John", "secrétaire",
@@ -64,7 +64,7 @@ public enum AppSingleton {
                 LocalDate.of(1964, 8, 25), 2);
         b2.numTelephones(portable2);
         Personnel chefDeService = b2.build();
-        
+
         DAOJDBC<GroupePersonnels> grPersoJDBC = DAOFactoryJDBC.getGroupePersonnelsDAOJDBC();
         GroupePersonnels departement =
                 new GroupePersonnels("Departement", 1);
@@ -73,11 +73,11 @@ public enum AppSingleton {
         service.add(chefDeService);
         departement.add(secretaire);
         departement.add(service);
-        
+
         grPersoJDBC.create(departement);
         grPersoJDBC.delete(service);
         ((GroupePersonnelsDAOJDBC) grPersoJDBC).affichage_table_GroupePersonnels();
-        
+
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);
         Builder b = new Builder("SMITH", "John", "secrétaire",
