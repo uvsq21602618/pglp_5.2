@@ -85,7 +85,7 @@ public class PersonnelDAO extends DAO<Personnel> {
                     System.out.println("Le fichier est supprimé!\n");
                 } else {
                     System.out.println("Echec de la suppression du fichier!\n");
-                } 
+                }
             } else {
                 System.out.println("Le fichier à supprimer n'existe pas!\n");
             }

@@ -12,6 +12,10 @@ import java.sql.Statement;
  */
 public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
     /**
+     * initialisation de la constante 3 pour eviter le "magic number".
+     */
+    static final int TROIS = 3;
+    /**
      * Constructeur de NumeroTelephoneDAOJDBC.
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
@@ -38,13 +42,13 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
             }
             try {
                 String updateString = ("insert into numero_telephone"
-                        + " values (?, '?', '?')");
+                        + " values (?, ?, ?)");
                 PreparedStatement update =
                         getConnect().prepareStatement(updateString);
 
                 update.setInt(1, obj.getId());
                 update.setString(2, obj.getDescriptif());
-                update.setString(3, obj.getNumero());
+                update.setString(TROIS, obj.getNumero());
 
                 update.executeUpdate();
                 update.close();
@@ -139,26 +143,72 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public NumeroTelephone find(final int id) throws SQLException {
-        NumeroTelephone search;
-        try (Statement stmt = getConnect().createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("select descriptif,"
-                    + " numero from numero_telephone"
-                    + " where id=" + id)) {
-                if (!rs.next()) {
-                    System.out.println("Il n'y a pas de numero correspondant"
-                            + " a l'id"
-                            + id + " dans la table numero_de_telephone!\n");
-                    return null;
+        NumeroTelephone search = null;
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "numero_telephone".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt = getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("select descriptif,"
+                            + " numero from numero_telephone"
+                            + " where id=" + id)) {
+                        if (!rs.next()) {
+                            System.out.println("Il n'y a pas de"
+                                    + " numero correspondant"
+                                    + " a l'id" + id + " dans la"
+                                    + " table numero_de_telephone!\n");
+                            return null;
+                        }
+                        String desc = rs.getString("descriptif");
+                        String num = rs.getString("numero");
+                        search = new NumeroTelephone(desc, num, id);
+                        System.out.println("Le numero suivant a ete trouve"
+                                + " avec l'identifiant " + id + ":");
+                        System.out.println(search.toString() + "\n");
+                        rs.close();
+                        stmt.close();
+                    }
                 }
-                String desc = rs.getString("descriptif");
-                String num = rs.getString("numero");
-                search = new NumeroTelephone(desc, num, id);
-                System.out.println("Le numero suivant a ete trouve"
-                        + " avec l'identifiant " + id + ":");
-                System.out.println(search.toString() + "\n");
-                rs.close();
-                stmt.close();
-                return search;
+            } else {
+                System.out.println("Il n'y a pas encore de numeros"
+                        + " dans la base de données!\n");
+            }
+        }
+        return search;
+    }
+
+    /**
+     * Methode pour afficher le contenu de la table numero_telephone.
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     */
+    public void affichageTableNumero() throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "numero_telephone".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt = getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("SELECT *"
+                            + " FROM numero_telephone")) {
+                        System.out.println("---Table numero_telephone:---\n");
+                        System.out.println("id\t descriptif\t numero\t");
+                        while (rs.next()) {
+                            System.out.printf("%d\t%s \t%s %n",
+                                    rs.getInt("id"),
+                                    rs.getString("descriptif"),
+                                    rs.getString("numero"));
+                        }
+                        System.out.println("-----------------------"
+                                + "-------------\n");
+                        rs.close();
+                    }
+                }
+            } else {
+                System.out.println("Il n'y a pas encore de numeros"
+                        + " dans la base de données!\n");
             }
         }
     }

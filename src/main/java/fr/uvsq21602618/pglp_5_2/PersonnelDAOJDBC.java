@@ -17,6 +17,18 @@ import fr.uvsq21602618.pglp_5_2.Personnel.Builder;
  */
 public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
     /**
+     * initialisation de la constante 3 pour eviter le "magic number".
+     */
+    static final int TROIS = 3;
+    /**
+     * initialisation de la constante 3 pour eviter le "magic number".
+     */
+    static final int QUATRE = 4;
+    /**
+     * initialisation de la constante 3 pour eviter le "magic number".
+     */
+    static final int CINQ = 5;
+    /**
      * Le DAO de numeroTelephone.
      */
     private DAOJDBC<NumeroTelephone> numTelJDBC;
@@ -51,14 +63,14 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
             }
             try {
                 String updateString = ("insert into personnel values"
-                        + " (?, '?', '?', '?', '?')");
+                        + " (?, ?, ?, ?, ?)");
                 PreparedStatement update =
                         getConnect().prepareStatement(updateString);
                 update.setInt(1, obj.getId());
                 update.setString(2, obj.getNom());
-                update.setString(3, obj.getPrenom());
-                update.setString(4, obj.getFonction());
-                update.setString(5, obj.getDateNaissance().toString());
+                update.setString(TROIS, obj.getPrenom());
+                update.setString(QUATRE, obj.getFonction());
+                update.setString(CINQ, obj.getDateNaissance().toString());
 
                 update.executeUpdate();
                 update.close();
@@ -180,54 +192,65 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
     public Personnel find(final int id) throws SQLException,
     FileNotFoundException, ClassNotFoundException, IOException {
         Personnel search = null;
-        try (Statement stmt =
-                getConnect().createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("select *"
-                    + "from personnel"
-                    + " where id=" + id)) {
-                if (!rs.next()) {
-                    System.out.println("Il n'y a pas de personnel"
-                            + " correspondant a l'id "
-                            + id + " dans la table personnel!\n");
-                    return null;
-                }
-                String nom = rs.getString("nom");
-                String prenom = rs.getString("prenom");
-                String fonction = rs.getString("fonction");
-                String date = rs.getString("date_de_naissance");
-                String[] tab = date.split("-");
-                LocalDate lDate =
-                        LocalDate.of(Integer.parseInt(tab[0]),
-                        Integer.parseInt(tab[1]), Integer.parseInt(tab[2]));
-                Builder b = new Builder(nom,
-                        prenom, fonction,
-                        lDate, id);
-                search = b.build();
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "personnel".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt =
+                        getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("select *"
+                            + "from personnel"
+                            + " where id=" + id)) {
+                        if (!rs.next()) {
+                            System.out.println("Il n'y a pas de personnel"
+                                    + " correspondant a l'id "
+                                    + id + " dans la table personnel!\n");
+                            return null;
+                        }
+                        String nom = rs.getString("nom");
+                        String prenom = rs.getString("prenom");
+                        String fonction = rs.getString("fonction");
+                        String date = rs.getString("date_de_naissance");
+                        String[] tab = date.split("-");
+                        LocalDate lDate =
+                                LocalDate.of(Integer.parseInt(tab[0]),
+                                        Integer.parseInt(tab[1]),
+                                        Integer.parseInt(tab[2]));
+                        Builder b = new Builder(nom,
+                                prenom, fonction,
+                                lDate, id);
+                        search = b.build();
 
-                int idNum;
-                NumeroTelephone numTel;
-                try (ResultSet rs2 = stmt.executeQuery("select *"
-                        + " from correspondance"
-                        + " where id_personnel=" + id)) {
-                    while (rs2.next()) {
-                        idNum = rs2.getInt("id_numero");
-                        numTel = numTelJDBC.find(idNum);
-                        if (numTel != null) {
-                            b.numTelephones(numTel);
+                        int idNum;
+                        NumeroTelephone numTel;
+                        try (ResultSet rs2 = stmt.executeQuery("select *"
+                                + " from correspondance"
+                                + " where id_personnel=" + id)) {
+                            while (rs2.next()) {
+                                idNum = rs2.getInt("id_numero");
+                                numTel = numTelJDBC.find(idNum);
+                                if (numTel != null) {
+                                    b.numTelephones(numTel);
+                                }
+                            }
+
+                            System.out.println("Le personnel suivant a ete"
+                                    + " trouve avec l'identifiant " + id + ":");
+                            System.out.println(search.toString() + "\n");
+
+                            rs2.close();
+                            rs.close();
+                            stmt.close();
                         }
                     }
-
-                    System.out.println("Le personnel suivant a ete"
-                            + " trouve avec l'identifiant " + id + ":");
-                    System.out.println(search.toString() + "\n");
-
-                    rs2.close();
-                    rs.close();
-                    stmt.close();
-                    return search;
                 }
+            } else {
+                System.out.println("Il n'y a pas encore de personnels!\n");
             }
         }
+        return search;
     }
 
     /**
@@ -278,6 +301,75 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
                     .error.DerbySQLIntegrityConstraintViolationException e) {
                 System.out.println("Cet id a deja était utilisé pour "
                         + "la table correspondance!\n");
+            }
+        }
+    }
+
+    /**
+     * Methode pour afficher le contenu de la table personnel.
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     */
+    public void affichageTablePersonnel() throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "correspondance".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt = getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("SELECT *"
+                            + " FROM personnel")) {
+                        System.out.println("---Table personnel:---\n");
+                        System.out.println("id\t nom\t prenom\t fonction\t"
+                                + " naissance\t");
+                        while (rs.next()) {
+                            System.out.printf("%d\t%s \t%s\t %s\t %s%n",
+                                    rs.getInt("id"),
+                                    rs.getString("nom"),
+                                    rs.getString("prenom"),
+                                    rs.getString("fonction"),
+                                    rs.getString("date_de_naissance"));
+                        }
+                        System.out.println("-----------------------"
+                                + "-------------\n");
+
+                        rs.close();
+                    }
+                }
+            } else {
+                System.out.println("Il n'y a pas encore de personnels!\n");
+            }
+        }
+    }
+
+    /**
+     * Methode pour afficher le contenu de la table correspondance.
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     */
+    public void affichageTableCorrespondance() throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "correspondance".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt = getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("SELECT *"
+                            + " FROM correspondance")) {
+                        System.out.println("---Table correspondance:---\n");
+                        System.out.println("id_personnel\t id_numero\t");
+                        while (rs.next()) {
+                            System.out.printf("%d\t\t%d\t%n",
+                                    rs.getInt("id_personnel"),
+                                    rs.getInt("id_numero"));
+                        }
+                        System.out.println("-----------------------"
+                                + "-------------\n");
+                        rs.close();
+                    }
+                }
+            } else {
+                System.out.println("Il n'y a pas de correspondance!\n");
             }
         }
     }

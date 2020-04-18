@@ -46,7 +46,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
             }
             try {
                 String updateString = ("insert into groupe_personnels values ("
-                        + "?,' ? ')");
+                        + "?, ? )");
                 PreparedStatement update =
                         getConnect().prepareStatement(updateString);
                 update.setInt(1, obj.getId());
@@ -96,30 +96,52 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public void delete(final GroupePersonnels obj) throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+
         try (Statement stmt = getConnect().createStatement()) {
             int idGroupe;
             idGroupe = obj.getId();
             String sql;
+            try (Statement exist = getConnect()
+                    .createStatement()) {
+                ResultSet rs2 = dbmd.getTables(null, null,
+                        "appartenance_personnel".toUpperCase(), null);
+                if (rs2.next()) {
+                    sql = "delete from appartenance_personnel where id_groupe="
+                            + idGroupe;
+                    stmt.executeUpdate(sql);
+                }
+                rs2.close();
+            }
 
-            sql = "delete from appartenance_personnel where id_groupe="
-                    + idGroupe;
-            stmt.executeUpdate(sql);
+            try (Statement exist = getConnect().createStatement()) {
+                ResultSet rs3 = dbmd.getTables(null, null,
+                        "appartenance_sous_groupe".toUpperCase(), null);
+                if (rs3.next()) {
+                    sql = "delete from appartenance_sous_groupe"
+                            + " where id_groupe="
+                            + idGroupe;
+                    stmt.executeUpdate(sql);
 
-            sql = "delete from appartenance_sous_groupe where id_groupe="
-                    + idGroupe;
-            stmt.executeUpdate(sql);
+                    sql = "delete from appartenance_sous_groupe"
+                            + " where id_sousGroupe=" + idGroupe;
+                    stmt.executeUpdate(sql);
 
-            sql = "delete from appartenance_sous_groupe"
-                    + " where id_sousGroupe=" + idGroupe;
-            stmt.executeUpdate(sql);
+                    sql = "delete from groupe_personnels where id="
+                            + idGroupe;
+                    stmt.executeUpdate(sql);
 
-            sql = "delete from groupe_personnels where id="
-                    + idGroupe;
-            stmt.executeUpdate(sql);
+                    exist.close();
+                }
+                rs3.close();
+            }
             stmt.close();
+
             System.out.printf("Le groupe avec l'id " + obj.getId()
             + " a bien été supprimé!\n");
+
         }
+
     }
     /**
      * Méthode de mise à jour.
@@ -144,8 +166,9 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
                     this.delete(obj);
                     this.create(obj);
                     System.out.println("La mise à jour du groupe d'id "
-                    + obj.getId()
-                    + " dans la table groupe_personnels a été effectué!\n");
+                            + obj.getId()
+                            + " dans la table groupe_personnels"
+                            + " a été effectué!\n");
                 }
                 stmt.close();
                 return obj;
@@ -163,6 +186,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      */
     public GroupePersonnels find(final int id) throws SQLException,
     FileNotFoundException, ClassNotFoundException, IOException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
         GroupePersonnels search = null;
         try (Statement stmt = getConnect().createStatement()) {
             try (ResultSet rs = stmt.executeQuery("select *"
@@ -181,38 +205,61 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
                 GroupePersonnels gp;
                 int idComp;
 
-                try (ResultSet rs1 = stmt.executeQuery("select * from"
-                        + " appartenance_personnel"
-                        + " where id_groupe= " + id)) {
-                    while (rs1.next()) {
-                        idComp = rs1.getInt("id_personnel");
-                        p = persoJDBC.find(idComp);
-                        if (p != null) {
-                            search.add(p);
-                        }
-                    }
-                    try (ResultSet rs2 = stmt.executeQuery("select * from"
-                            + " appartenance_sous_groupe"
-                            + " where id_groupe= " + id)) {
-                        while (rs2.next()) {
-                            idComp = rs2.getInt("id_sousGroupe");
-                            gp = this.find(idComp);
-                            if (gp != null) {
-                                search.add(gp);
+                try (Statement exist = getConnect().createStatement()) {
+                    ResultSet rsEx = dbmd.getTables(null, null,
+                            "appartenance_personnel".toUpperCase(),
+                            null);
+                    if (rsEx.next()) {
+                        try (ResultSet rs1 = stmt.executeQuery("select * from"
+                                + " appartenance_personnel"
+                                + " where id_groupe= " + id)) {
+                            while (rs1.next()) {
+                                idComp = rs1.getInt("id_personnel");
+                                p = persoJDBC.find(idComp);
+                                if (p != null) {
+                                    search.add(p);
+                                }
+                                rs1.close();
                             }
                         }
-                        System.out.println("Le groupe suivant a ete trouve"
-                                + " avec l'identifiant " + id + ":");
-                        System.out.println(search.toString() + "\n");
-                        rs.close();
-                        rs1.close();
-                        rs2.close();
-                        stmt.close();
-                        return search;
+                    } else {
+                        System.out.println("Il n'y a pas encore de personnels"
+                                + " dans un groupe!\n");
+                    }
+                    try (Statement exist2 = getConnect().createStatement()) {
+                        ResultSet rsEx2 = dbmd.getTables(null, null,
+                                "appartenance_sous_groupe".toUpperCase(),
+                                null);
+                        if (rsEx2.next()) {
+                            try (ResultSet rs2 = stmt.executeQuery("select"
+                                    + " * from"
+                                    + " appartenance_sous_groupe"
+                                    + " where id_groupe= " + id)) {
+                                while (rs2.next()) {
+                                    idComp = rs2.getInt("id_sousGroupe");
+                                    gp = this.find(idComp);
+                                    if (gp != null) {
+                                        search.add(gp);
+                                    }
+                                }
+                                System.out.println("Le groupe suivant"
+                                        + " a ete trouve"
+                                        + " avec l'identifiant " + id + ":");
+                                System.out.println(search.toString() + "\n");
+                                rs.close();
+                                rs2.close();
+                                stmt.close();
+                                return search;
+                            }
+                        } else {
+                            System.out.println("Il n'y a pas encore de groupes"
+                                    + " dans un groupe!\n");
+                        }
                     }
                 }
             }
         }
+        return null;
     }
     /**
      * Methode pour creer la table qui associe le composant de classe Personnel
@@ -223,13 +270,11 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      */
     private void appartientPersonnel(final int idGroupe, final int idPerso)
             throws SQLException {
-
         DatabaseMetaData dbmd = getConnect().getMetaData();
         ResultSet rs = dbmd.getTables(null, null,
                 "appartenance_personnel".toUpperCase(), null);
 
         try (Statement stmt = getConnect().createStatement()) {
-
             if (!rs.next()) {
                 stmt.executeUpdate("Create table"
                         + " appartenance_personnel"
@@ -252,7 +297,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
                     System.out.println("id_groupe\t id_personnel");
                     while (rs1.next()) {
                         System.out.printf("%d\t\t%d%n",
-                                rs.getInt("id_groupe"),
+                                rs1.getInt("id_groupe"),
                                 rs1.getInt("id_personnel"));
                     }
                     System.out.println("--------------------"
@@ -326,19 +371,99 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public void affichageTableGroupePersonnels() throws SQLException {
-        try (Statement stmt = getConnect().createStatement()) {
-            try (ResultSet rs = stmt.executeQuery("SELECT *"
-                    + " FROM groupe_personnels")) {
-                System.out.println("---Table groupe_personnels:---\n");
-                System.out.println("id\t nom_groupe\t");
-                while (rs.next()) {
-                    System.out.printf("%d\t%s%n", rs.getInt("id"),
-                            rs.getString("nom_groupe"));
-                }
-                System.out.println("-----------------------"
-                        + "-------------\n");
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "groupe_personnels".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt = getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("SELECT *"
+                            + " FROM groupe_personnels")) {
+                        System.out.println("---Table groupe_personnels:---\n");
+                        System.out.println("id\t nom_groupe\t");
+                        while (rs.next()) {
+                            System.out.printf("%d\t%s%n", rs.getInt("id"),
+                                    rs.getString("nom_groupe"));
+                        }
+                        System.out.println("-----------------------"
+                                + "-------------\n");
 
-                rs.close();
+                        rs.close();
+                    }
+                }
+            } else {
+                System.out.println("Il n'y a pas encore de"
+                        + " groupe de personnels!\n");
+            }
+        }
+    }
+
+    /**
+     * Methode pour afficher le contenu de la table appartenance_personnel.
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     */
+    public void affichageTableAppartenancePersonnel() throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "appartenance_personnel".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt = getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("SELECT *"
+                            + " FROM appartenance_personnel")) {
+                        System.out.println("---Table appartenance"
+                                + "_personnels:---\n");
+                        System.out.println("id_groupe\t id_personnel\t");
+                        while (rs.next()) {
+                            System.out.printf("%d\t\t%d%n",
+                                    rs.getInt("id_groupe"),
+                                    rs.getInt("id_personnel"));
+                        }
+                        System.out.println("-----------------------"
+                                + "-------------\n");
+                        rs.close();
+                    }
+                }
+            } else {
+                System.out.println("Il n'y a pas encore de groupes ayant"
+                        + " des personnels!\n");
+            }
+        }
+    }
+
+    /**
+     * Methode pour afficher le contenu de la table appartenance_sous_groupe.
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     */
+    public void affichageTableAppartenanceGroupe() throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        try (Statement exist = getConnect().createStatement()) {
+            ResultSet rsEx = dbmd.getTables(null, null,
+                    "appartenance_sous_groupe".toUpperCase(),
+                    null);
+            if (rsEx.next()) {
+                try (Statement stmt = getConnect().createStatement()) {
+                    try (ResultSet rs = stmt.executeQuery("SELECT *"
+                            + " FROM appartenance_sous_groupe")) {
+                        System.out.println("---Table appartenance_"
+                                + "sous_groupe:---\n");
+                        System.out.println("id_groupe\t id_sousGroupe\t");
+                        while (rs.next()) {
+                            System.out.printf("%d\t\t%d%n",
+                                    rs.getInt("id_groupe"),
+                                    rs.getInt("id_sousGroupe"));
+                        }
+                        System.out.println("-----------------------"
+                                + "-------------\n");
+
+                        rs.close();
+                    }
+                }
+            } else {
+                System.out.println("Il n'y a pas encore de groupes ayant"
+                        + " des sous-groupes!\n");
             }
         }
     }
