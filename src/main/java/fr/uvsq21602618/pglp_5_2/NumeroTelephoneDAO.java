@@ -51,8 +51,12 @@ public class NumeroTelephoneDAO extends DAO<NumeroTelephone> {
         if (dir.exists()) {
             File file = new File(nomDir + "\\" + obj.getId() + ".txt");
             if (file.exists()) {
-                file.delete();
-                System.out.println("Le fichier est supprimé!");
+                boolean test = file.delete();
+                if (test) {
+                    System.out.println("Le fichier est supprimé!");
+                } else {
+                    System.out.println("Echec de la suppression du fichier!");
+                }
             } else {
                 System.out.println("Le fichier à supprimer n'existe pas!");
             }
@@ -73,9 +77,13 @@ public class NumeroTelephoneDAO extends DAO<NumeroTelephone> {
         if (dir.exists()) {
             File file = new File(nomDir + "\\" + obj.getId() + ".txt");
             if (file.exists()) {
-                file.delete();
-                obj.maj();
-                this.create(obj);
+                boolean test = file.delete();
+                if (test) {
+                    obj.maj();
+                    this.create(obj);
+                } else {
+                    System.out.println("Echec de la mise a jour du fichier!\n");
+                }
             } else {
                 System.out.println("Le fichier à mettre à jour n'existe pas!");
             }
@@ -101,12 +109,12 @@ public class NumeroTelephoneDAO extends DAO<NumeroTelephone> {
             if (search.exists()) {
                 byte[] fileContent = Files.readAllBytes(search.toPath());
                 deserialized = deserialize(fileContent);
+                NumeroTelephone num = (NumeroTelephone) deserialized;
+                System.out.println(num.toString());
+                return num;
             } else {
                 System.out.println("Le fichier n'existe pas!");
             }
-            NumeroTelephone num = (NumeroTelephone) deserialized;
-            System.out.println(num.toString());
-            return num;
         } else {
             System.out.println("Le dossier n'existe pas!");
         }

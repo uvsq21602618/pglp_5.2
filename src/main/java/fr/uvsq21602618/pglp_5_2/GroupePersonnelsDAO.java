@@ -83,7 +83,6 @@ public class GroupePersonnelsDAO extends DAO<GroupePersonnels> {
                 } else {
                     System.out.println("Echec de la mise a jour du fichier!");
                 }
-                
             } else {
                 System.out.println("Le fichier à mettre à jour n'existe pas!");
             }
