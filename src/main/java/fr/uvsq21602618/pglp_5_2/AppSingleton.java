@@ -17,11 +17,12 @@ public enum AppSingleton {
     ENVIRONNEMENT;
     /**
      * Execution du programme.
-     * @throws SQLException 
-     * @throws IOException 
-     * @throws ClassNotFoundException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     * @throws IOException Exceptions liees aux entrees/sorties
+     * @throws ClassNotFoundException Exceptions liees a une classe inexistante
      */
-    public void run() throws IOException, SQLException, ClassNotFoundException {
+    public void run() throws IOException,
+    SQLException, ClassNotFoundException {
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0751624519", 1);
         NumeroTelephone portable2 =
@@ -179,7 +180,8 @@ public enum AppSingleton {
      * @throws ClassNotFoundException Exception lié à une classe inexistante
      * @throws IOException liee aux entreés/sorties
      */
-    public static void main(final String[] args) throws SQLException, ClassNotFoundException, IOException {
+    public static void main(final String[] args) throws SQLException,
+    ClassNotFoundException, IOException {
         ENVIRONNEMENT.run();
     }
 }

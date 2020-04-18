@@ -1,12 +1,11 @@
 package fr.uvsq21602618.pglp_5_2;
 
-import java.io.IOException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 /**
- * Classe de NumeroTelephoneDAOJDBC. 
+ * Classe de NumeroTelephoneDAOJDBC.
  * @author Nathalie
  *
  */
@@ -23,15 +22,15 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @param obj L'objet à créer
      * @return obj qui vient d'etre cree
      * @throws SQLException Exception liee a l'acces a la base de donnees
-     * @throws IOException Exceptions liees aux entrees/sorties
      */
-    public NumeroTelephone create(final NumeroTelephone obj) throws SQLException {
-
-        DatabaseMetaData dbmd = connect.getMetaData();
-        ResultSet rs = dbmd.getTables(null, null, "numero_telephone".toUpperCase(), null); 
+    public NumeroTelephone create(final NumeroTelephone obj)
+            throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        ResultSet rs = dbmd.getTables(null, null,
+                "numero_telephone".toUpperCase(), null);
         Statement creation = null;
 
-        creation = connect.createStatement();
+        creation = getConnect().createStatement();
 
         if (!rs.next()) {
             creation.executeUpdate("Create table numero_telephone"
@@ -41,19 +40,21 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
 
         try {
             creation.executeUpdate("insert into numero_telephone values ("
-                    + obj.getId() + ",'" + obj.getDescriptif() +"', '" + obj.getNumero() +"')");
+                    + obj.getId() + ",'" + obj.getDescriptif()
+                    + "', '" + obj.getNumero() + "')");
             rs = creation.executeQuery("SELECT * FROM numero_telephone");
 
             System.out.println("---Table numero_telephone:---\n");
             System.out.println("id\t descriptif\t numero");
-            while (rs.next()) { 
+            while (rs.next()) {
                 System.out.printf("%d\t%s\t%s\n", rs.getInt("id"),
                         rs.getString("descriptif"), rs.getString("numero"));
             }
             System.out.println("------------------------------------\n");
-            System.out.println("L'objet " + obj.toString() + " a bien été enregistré!\n");
+            System.out.println("L'objet " + obj.toString()
+            + " a bien été enregistré!\n");
             rs.close();
-        }  catch ( org.apache.derby.shared.common.error
+        }  catch (org.apache.derby.shared.common.error
                 .DerbySQLIntegrityConstraintViolationException e) {
             System.out.println("Cet id a deja était utilisé pour"
                     + " la table numero_de_telephone!\n");
@@ -67,22 +68,25 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @param obj L'objet à effacer
      * @throws SQLException  Exception liee a l'acces a la base de donnees
      */
-    public void delete(final NumeroTelephone obj) throws SQLException { 
-        ResultSet rs = null;  
-        Statement stmt = connect.createStatement();
+    public void delete(final NumeroTelephone obj) throws SQLException {
+        ResultSet rs = null;
+        Statement stmt = getConnect().createStatement();
         rs = stmt.executeQuery("select id"
                 + " from numero_telephone where id="
                 + obj.getId());
 
-        if (!rs.next()){
-            System.out.println("Cet identifiant pour numero n'a pas encore été utilisé,"
-                    + "il n'y a donc pas de suppression possible."); 
+        if (!rs.next()) {
+            System.out.println("Cet identifiant pour numero n'a pas"
+                    + " encore été utilisé,"
+                    + "il n'y a donc pas de suppression possible.");
         } else {
-            String sql = "delete from correspondance where id_numero=" + obj.getId();
+            String sql = "delete from correspondance where id_numero="
+                    + obj.getId();
             stmt.executeUpdate(sql);
             sql = "delete from numero_telephone where id=" + obj.getId();
             stmt.executeUpdate(sql);
-            System.out.printf("Le numero de telephone avec l'id " + obj.getId() 
+            System.out.printf("Le numero de telephone avec l'id "
+            + obj.getId()
             + " a bien été supprimé!\n");
         }
         stmt.close();
@@ -95,23 +99,25 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      * @return obj L'objet à mettre à jour
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
-    public NumeroTelephone update(final NumeroTelephone obj) throws SQLException {
-        Statement stmt = connect.createStatement();
-        ResultSet result = null;           
+    public NumeroTelephone update(final NumeroTelephone obj)
+            throws SQLException {
+        Statement stmt = getConnect().createStatement();
+        ResultSet result = null;
         result = stmt.executeQuery("select descriptif,"
                 + " numero from numero_telephone where id="
                 + obj.getId());
-        if (!result.next()){
-            System.out.println("Cet identifiant pour numero n'a pas encore été utilisé,"
-                    + "il n'y a donc pas de mise a jour possible."); 
+        if (!result.next()) {
+            System.out.println("Cet identifiant pour numero"
+                    + " n'a pas encore été utilisé,"
+                    + "il n'y a donc pas de mise a jour possible.");
             this.create(obj);
-        }
-        else{
+        } else {
             this.delete(obj);
             this.create(obj);
-            System.out.println("La mise à jour du numero d'id " + obj.getId() 
+            System.out.println("La mise à jour du numero d'id "
+            + obj.getId()
             + " dans la table numero_de_telephone a été effectué!\n");
-        }   
+        }
         stmt.close();
         return obj;
     }
@@ -123,21 +129,23 @@ public class NumeroTelephoneDAOJDBC extends DAOJDBC<NumeroTelephone> {
      */
     public NumeroTelephone find(final int id) throws SQLException {
         NumeroTelephone search;
-        Statement stmt = connect.createStatement();
-        ResultSet rs = null;           
+        Statement stmt = getConnect().createStatement();
+        ResultSet rs = null;
         rs = stmt.executeQuery("select descriptif,"
                 + " numero from numero_telephone"
                 + " where id=" + id);
-        if (rs.next() == false) {
-            System.out.println("Il n'y a pas de numero correspondant a l'id"
+        if (!rs.next()) {
+            System.out.println("Il n'y a pas de numero correspondant"
+                    + " a l'id"
                     + id + " dans la table numero_de_telephone!\n");
             return null;
         }
         String desc = rs.getString("descriptif");
         String num = rs.getString("numero");
         search = new NumeroTelephone(desc, num, id);
-        System.out.println("Le numero suivant a ete trouve avec l'identifiant " + id + ":");
-        System.out.println(search.toString()+ "\n");
+        System.out.println("Le numero suivant a ete trouve"
+                + " avec l'identifiant " + id + ":");
+        System.out.println(search.toString() + "\n");
 
         stmt.close();
         return search;

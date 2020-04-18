@@ -57,10 +57,12 @@ public class PersonnelDAO extends DAO<Personnel> {
                 obj.maj();
                 this.create(obj);
             } else {
-                System.out.println("Le fichier à mettre à jour n'existe pas!\n");
+                System.out.println("Le fichier à mettre à jour"
+                        + " n'existe pas!\n");
             }
         } else {
-            System.out.println("Le dossier contenant le fichier n'existe pas!\n");
+            System.out.println("Le dossier contenant le fichier"
+                    + " n'existe pas!\n");
         }
         return obj;
     }
@@ -106,7 +108,7 @@ public class PersonnelDAO extends DAO<Personnel> {
                 return pers;
             } else {
                 System.out.println("Le fichier n'existe pas!\n");
-            }        
+            }
         } else {
             System.out.println("Le dossier n'existe pas!\n");
         }

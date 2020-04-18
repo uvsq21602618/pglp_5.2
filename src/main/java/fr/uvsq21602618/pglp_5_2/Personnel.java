@@ -239,14 +239,14 @@ public final class Personnel implements Composant, Serializable {
     }
     /**
      * Methode pour definir le nom du personnel.
-     * @param nom2 le nom 
+     * @param nom2 le nom
      */
     public void setNom(final String nom2) {
         this.nom = nom2;
     }
     /**
      * Methode pour definir le prenom du personnel.
-     * @param prenom2 le prenom 
+     * @param prenom2 le prenom
      */
     public void setPrenom(final String prenom2) {
         this.prenom = prenom2;

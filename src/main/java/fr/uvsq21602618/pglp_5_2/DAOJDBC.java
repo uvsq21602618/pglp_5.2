@@ -14,16 +14,26 @@ import java.sql.SQLException;
  * @param <T> La classe choisie
  */
 public abstract class DAOJDBC<T> extends DAO<T> {
-    
+    /**
+     * Chaîne de connexion precisant les informations pour
+     * la connexion a la base de données.
+     */
     private String dbUrl;
-    protected Connection connect;
-    
+    /**
+     * Permet l'interaction avec le JDBC.
+     */
+    private Connection connect;
+
+    /**
+     * Constructeur du DAO pour JDBC.
+     * @throws SQLException Exception liee a l'acces a la base de donnees
+     */
     public DAOJDBC() throws SQLException {
         dbUrl = "jdbc:derby:donneesPourDB\\jdbcDB;create=true";
-        
+
         try {
-            connect = DriverManager.getConnection(dbUrl);
-        } catch(SQLException e) {
+            setConnect(DriverManager.getConnection(dbUrl));
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -74,5 +84,19 @@ public abstract class DAOJDBC<T> extends DAO<T> {
         ByteArrayInputStream b = new ByteArrayInputStream(bytes);
         ObjectInputStream o = new ObjectInputStream(b);
         return o.readObject();
+    }
+    /**
+     * Methode pour recuperer connect.
+     * @return connect.
+     */
+    public Connection getConnect() {
+        return connect;
+    }
+    /**
+     * Methode pour redefinir connect.
+     * @param newCon a remplacer
+     */
+    public void setConnect(final Connection newCon) {
+        this.connect = newCon;
     }
 }

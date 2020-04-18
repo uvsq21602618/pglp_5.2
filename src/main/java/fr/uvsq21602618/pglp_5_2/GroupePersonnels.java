@@ -47,14 +47,16 @@ public class GroupePersonnels implements Composant, Serializable {
     }
     /**
      * Méthode pour retourne en string les informations.
+     * @return str l'information
      */
     public String toString() {
-        String str;
-        str = ("-------" + this.getNomGroupe() + "-------\n");
+        StringBuffer buf = new StringBuffer();
+        buf.append("-------" + this.getNomGroupe() + "-------\n");
         for (Composant composant: children) {
-            str = str + composant.toString() + "\n";
+            buf.append(composant.toString() + "\n");
         }
-        return str;
+        String s = buf.toString();
+        return s;
     }
     /**
      * Méthode qui ajoute un composant au groupe.
@@ -154,7 +156,7 @@ public class GroupePersonnels implements Composant, Serializable {
      * @return en lecture seulement children
      */
     public List<Composant> getChildren() {
-        return Collections.unmodifiableList(this.children); 
+        return Collections.unmodifiableList(this.children);
     }
     /**
      * Méthode pour la mise à jour.

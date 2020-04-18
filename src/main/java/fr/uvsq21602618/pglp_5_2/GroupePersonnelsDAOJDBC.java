@@ -6,11 +6,8 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.LocalDate;
-
-import fr.uvsq21602618.pglp_5_2.Personnel.Builder;
 /**
- * Classe de GroupePersonnelsDAOJDBC. 
+ * Classe de GroupePersonnelsDAOJDBC.
  * @author Nathalie
  *
  */
@@ -18,7 +15,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
     /**
      * Le DAO de Personnel.
      */
-    public DAOJDBC<Personnel> persoJDBC;
+    private DAOJDBC<Personnel> persoJDBC;
     /**
      * Constructeur de GroupePersonnelsDAOJDBC.
      * @throws SQLException Exception liee a l'acces a la base de donnees
@@ -35,17 +32,20 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      * @throws IOException Exceptions liees aux entrees/sorties
      */
-    public GroupePersonnels create(final GroupePersonnels obj) throws SQLException, IOException {
-        DatabaseMetaData dbmd = connect.getMetaData();
-        ResultSet rs = dbmd.getTables(null, null, "groupe_personnels".toUpperCase(), null); 
+    public GroupePersonnels create(final GroupePersonnels obj)
+            throws SQLException, IOException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        ResultSet rs = dbmd.getTables(null, null,
+                "groupe_personnels".toUpperCase(), null);
         Statement creation = null;
 
-        creation = connect.createStatement();
+        creation = getConnect().createStatement();
 
         if (!rs.next()) {
             creation.executeUpdate("Create table groupe_personnels"
                     + " (id int primary key, nom_groupe varchar(30))");
-        } try {
+        }
+        try {
             creation.executeUpdate("insert into groupe_personnels values ("
                     + obj.getId() + ",'" + obj.getNomGroupe()
                     + "')");
@@ -53,7 +53,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
 
             System.out.println("---Table groupe_personnels:---\n");
             System.out.println("id\t nom_groupe\t");
-            while (rs.next()) { 
+            while (rs.next()) {
                 System.out.printf("%d\t%s\n", rs.getInt("id"),
                         rs.getString("nom_groupe"));
             }
@@ -63,18 +63,19 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
             Personnel p;
             GroupePersonnels gp;
             for (Composant comp : obj.getChildren()) {
-                if (comp instanceof Personnel) { 
+                if (comp instanceof Personnel) {
                     p = (Personnel) comp;
                     persoJDBC.create(p);
                     this.appartientPersonnel(obj.getId(), p.getId());
-                } else {  
+                } else {
                     gp = (GroupePersonnels) comp;
                     this.create(gp);
                     this.appartientGroupe(obj.getId(), gp.getId());
-                } 
+                }
             }
 
-            System.out.println("L'objet " + obj.toString() + "a bien été enregistré!\n\n");
+            System.out.println("L'objet " + obj.toString()
+            + "a bien été enregistré!\n\n");
         }  catch (org.apache.derby.shared.common.error
                 .DerbySQLIntegrityConstraintViolationException e) {
             System.out.println("Cet id a deja était utilisé"
@@ -90,24 +91,28 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public void delete(final GroupePersonnels obj) throws SQLException {
-        Statement stmt = connect.createStatement();
+        Statement stmt = getConnect().createStatement();
         int idGroupe;
         idGroupe = obj.getId();
         String sql;
 
-        sql = "delete from appartenance_personnel where id_groupe=" + idGroupe;
-        stmt.executeUpdate(sql);     
-
-        sql = "delete from appartenance_sous_groupe where id_groupe=" + idGroupe;
+        sql = "delete from appartenance_personnel where id_groupe="
+        + idGroupe;
         stmt.executeUpdate(sql);
 
-        sql = "delete from appartenance_sous_groupe where id_sousGroupe=" + idGroupe;
+        sql = "delete from appartenance_sous_groupe where id_groupe="
+        + idGroupe;
         stmt.executeUpdate(sql);
 
-        sql = "delete from groupe_personnels where id=" + idGroupe;
+        sql = "delete from appartenance_sous_groupe"
+                + " where id_sousGroupe=" + idGroupe;
+        stmt.executeUpdate(sql);
+
+        sql = "delete from groupe_personnels where id="
+        + idGroupe;
         stmt.executeUpdate(sql);
         stmt.close();
-        System.out.printf("Le groupe avec l'id " + obj.getId() 
+        System.out.printf("Le groupe avec l'id " + obj.getId()
         + " a bien été supprimé!\n");
     }
     /**
@@ -117,27 +122,27 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * @throws SQLException Exception liee a l'acces a la base de donnees
      * @return obj L'objet à mettre à jour
      */
-    public GroupePersonnels update(final GroupePersonnels obj) throws SQLException,
+    public GroupePersonnels update(final GroupePersonnels obj)
+            throws SQLException,
     IOException {
-        Statement stmt = connect.createStatement();
-        ResultSet result = null;           
+        Statement stmt = getConnect().createStatement();
+        ResultSet result = null;
         result = stmt.executeQuery("select *"
                 + "from groupe_personnels where id="
                 + obj.getId());
-        if (!result.next()){
-            System.out.println("Cet identifiant pour groupe n'a pas encore été utilisé,"
-                    + "il n'y a donc pas de mise a jour possible."); 
+        if (!result.next()) {
+            System.out.println("Cet identifiant pour groupe n'a pas"
+                    + " encore été utilisé,"
+                    + "il n'y a donc pas de mise a jour possible.");
             this.create(obj);
-        }
-        else {
+        } else {
             this.delete(obj);
             this.create(obj);
-            System.out.println("La mise à jour du groupe d'id " + obj.getId() 
+            System.out.println("La mise à jour du groupe d'id " + obj.getId()
             + " dans la table groupe_personnels a été effectué!\n");
-        }   
+        }
         stmt.close();
         return obj;
-
     }
     /**
      * Méthode de recherche des informations.
@@ -151,13 +156,14 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
     public GroupePersonnels find(final int id) throws SQLException,
     FileNotFoundException, ClassNotFoundException, IOException {
         GroupePersonnels search = null;
-        Statement stmt = connect.createStatement();
-        ResultSet rs = null;           
+        Statement stmt = getConnect().createStatement();
+        ResultSet rs = null;
         rs = stmt.executeQuery("select *"
                 + "from groupe_personnels"
                 + " where id=" + id);
-        if (rs.next() == false) {
-            System.out.println("Il n'y a pas de groupe de personnels correspondant a l'id"
+        if (!rs.next()) {
+            System.out.println("Il n'y a pas de groupe de"
+                    + " personnels correspondant a l'id"
                     + id + " dans la table groupe_personnels!\n");
             return null;
         }
@@ -166,7 +172,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
         Personnel p;
         GroupePersonnels gp;
         int idComp;
-        
+
         rs = stmt.executeQuery("select * from appartenance_personnel"
                 + " where id_groupe= " + id);
         while (rs.next()) {
@@ -176,7 +182,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
                 search.add(p);
             }
         }
-        
+
         rs = stmt.executeQuery("select * from appartenance_sous_groupe"
                 + " where id_groupe= " + id);
         while (rs.next()) {
@@ -186,8 +192,9 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
                 search.add(gp);
             }
         }
-        System.out.println("Le groupe suivant a ete trouve avec l'identifiant " + id + ":");
-        System.out.println(search.toString()+ "\n");
+        System.out.println("Le groupe suivant a ete trouve"
+                + " avec l'identifiant " + id + ":");
+        System.out.println(search.toString() + "\n");
 
         stmt.close();
         return search;
@@ -203,18 +210,21 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
     private void appartientPersonnel(final int idGroupe, final int idPerso)
             throws SQLException {
 
-        DatabaseMetaData dbmd = connect.getMetaData();
-        ResultSet rs = dbmd.getTables(null, null, "appartenance_personnel".toUpperCase(), null); 
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        ResultSet rs = dbmd.getTables(null, null,
+                "appartenance_personnel".toUpperCase(), null);
         Statement stmt = null;
 
-        stmt = connect.createStatement();
+        stmt = getConnect().createStatement();
 
         if (!rs.next()) {
             stmt.executeUpdate("Create table appartenance_personnel"
                     + " (id_groupe int NOT NULL, id_personnel int NOT NULL, "
                     + "primary key (id_groupe, id_personnel),"
-                    + "foreign key (id_groupe) references groupe_personnels(id), "
-                    + "foreign key (id_personnel) references personnel(id))");
+                    + "foreign key (id_groupe) references"
+                    + " groupe_personnels(id), "
+                    + "foreign key (id_personnel)"
+                    + " references personnel(id))");
         }
 
         try {
@@ -224,41 +234,44 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
 
             System.out.println("---Table appartenance_personnel:---\n");
             System.out.println("id_groupe\t id_personnel");
-            while (rs.next()) { 
+            while (rs.next()) {
                 System.out.printf("%d\t\t%d\n", rs.getInt("id_groupe"),
                         rs.getInt("id_personnel"));
             }
             System.out.println("------------------------------------\n");
-            rs.close(); 
+            rs.close();
             stmt.close();
-        }  catch ( org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
+        }  catch (org.apache.derby.shared.common
+                .error.DerbySQLIntegrityConstraintViolationException e) {
             System.out.println("Cet id a deja était utilisé pour la "
                     + "table appartenance_personnel!\n");
         }
     }
     /**
-     * Methode pour creer la table qui associe le composant de classe Personnel
-     * avec le groupe de Personnels auquel il appartient.
+     * Methode pour creer la table qui associe le composant de classe
+     * GroupePersonnels avec le groupe de Personnels auquel il appartient.
      * @param idGroupe identifiant du groupe
-     * @param idPerso identifiant du personnel
+     * @param idSousGr identifiant du sous groupe
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     private void appartientGroupe(final int idGroupe, final int idSousGr)
             throws SQLException {
 
-        DatabaseMetaData dbmd = connect.getMetaData();
+        DatabaseMetaData dbmd = getConnect().getMetaData();
         ResultSet rs = dbmd.getTables(null, null,
-                "appartenance_sous_groupe".toUpperCase(), null); 
+                "appartenance_sous_groupe".toUpperCase(), null);
         Statement stmt = null;
 
-        stmt = connect.createStatement();
+        stmt = getConnect().createStatement();
 
         if (!rs.next()) {
             stmt.executeUpdate("Create table appartenance_sous_groupe"
                     + " (id_groupe int NOT NULL, id_sousGroupe int NOT NULL, "
                     + "primary key (id_groupe, id_sousGroupe),"
-                    + "foreign key (id_groupe) references groupe_personnels(id), "
-                    + "foreign key (id_sousGroupe) references groupe_personnels(id))");
+                    + "foreign key (id_groupe) references"
+                    + " groupe_personnels(id), "
+                    + "foreign key (id_sousGroupe) references"
+                    + " groupe_personnels(id))");
         }
 
         try {
@@ -268,14 +281,15 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
 
             System.out.println("---Table appartenance_sous_groupe:---\n");
             System.out.println("id_groupe\t id_sousGroupe");
-            while (rs.next()) { 
+            while (rs.next()) {
                 System.out.printf("%d\t\t%d\n", rs.getInt("id_groupe"),
                         rs.getInt("id_sousGroupe"));
             }
             System.out.println("------------------------------------\n");
-            rs.close(); 
+            rs.close();
             stmt.close();
-        }  catch ( org.apache.derby.shared.common.error.DerbySQLIntegrityConstraintViolationException e) {
+        }  catch (org.apache.derby.shared.common
+                .error.DerbySQLIntegrityConstraintViolationException e) {
             System.out.println("Cet id a deja était utilisé pour la "
                     + "table appartenance_sous_groupe!\n");
         }
@@ -284,15 +298,16 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      * Methode pour afficher le contenu de la table groupe_personnels.
      * @throws SQLException Exception liee a l'acces a la base de donnees
      */
-    public void affichage_table_GroupePersonnels() throws SQLException {
-        DatabaseMetaData dbmd = connect.getMetaData();
-        ResultSet rs = dbmd.getTables(null, null, "groupe_personnels".toUpperCase(), null);
-        Statement stmt = connect.createStatement();
+    public void affichageTableGroupePersonnels() throws SQLException {
+        DatabaseMetaData dbmd = getConnect().getMetaData();
+        ResultSet rs = dbmd.getTables(null, null,
+                "groupe_personnels".toUpperCase(), null);
+        Statement stmt = getConnect().createStatement();
         rs = stmt.executeQuery("SELECT * FROM groupe_personnels");
 
         System.out.println("---Table groupe_personnels:---\n");
         System.out.println("id\t nom_groupe\t");
-        while (rs.next()) { 
+        while (rs.next()) {
             System.out.printf("%d\t%s\n", rs.getInt("id"),
                     rs.getString("nom_groupe"));
         }

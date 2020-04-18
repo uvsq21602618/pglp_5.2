@@ -110,7 +110,7 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode create de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     @Test
     public void createTest() throws IOException, ClassNotFoundException, SQLException {       
@@ -135,7 +135,7 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode delete de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     @Test
     public void deleteTest() throws IOException, ClassNotFoundException, SQLException {      
@@ -155,7 +155,7 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode update de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     @Test
     public void updateTest() throws IOException, ClassNotFoundException, SQLException {      
@@ -179,7 +179,7 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode find de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     @Test
     public void findTest() throws IOException, ClassNotFoundException, SQLException {      

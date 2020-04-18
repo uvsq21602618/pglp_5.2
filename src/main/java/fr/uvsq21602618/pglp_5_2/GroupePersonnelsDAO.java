@@ -50,8 +50,12 @@ public class GroupePersonnelsDAO extends DAO<GroupePersonnels> {
         if (dir.exists()) {
             File file = new File(nomDir + "\\" + obj.getId() + ".txt");
             if (file.exists()) {
-                file.delete();
-                System.out.println("Le fichier est supprimé!");
+                boolean test = file.delete();
+                if (test) {
+                    System.out.println("Le fichier est supprimé!");
+                } else {
+                    System.out.println("Echec de la supression du fichier!");
+                }
             } else {
                 System.out.println("Le fichier à supprimer n'existe pas!");
             }
@@ -72,9 +76,14 @@ public class GroupePersonnelsDAO extends DAO<GroupePersonnels> {
         if (dir.exists()) {
             File file = new File(nomDir + "\\" + obj.getId() + ".txt");
             if (file.exists()) {
-                file.delete();
-                obj.maj();
-                this.create(obj);
+                boolean test = file.delete();
+                if (test) {
+                    obj.maj();
+                    this.create(obj);
+                } else {
+                    System.out.println("Echec de la mise a jour du fichier!");
+                }
+                
             } else {
                 System.out.println("Le fichier à mettre à jour n'existe pas!");
             }
@@ -101,14 +110,12 @@ public class GroupePersonnelsDAO extends DAO<GroupePersonnels> {
             if (search.exists()) {
                 byte[] fileContent = Files.readAllBytes(search.toPath());
                 deserialized = deserialize(fileContent);
+                GroupePersonnels gp = (GroupePersonnels) deserialized;
+                gp.hierarchie();
+                return gp;
             } else {
                 System.out.println("Le fichier n'existe pas!");
             }
-
-            GroupePersonnels gp = (GroupePersonnels) deserialized;
-            gp.hierarchie();
-
-            return gp;
         } else {
             System.out.println("Le dossier n'existe pas!");
         }
