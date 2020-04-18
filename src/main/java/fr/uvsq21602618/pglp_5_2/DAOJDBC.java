@@ -13,7 +13,7 @@ import java.sql.SQLException;
  *
  * @param <T> La classe choisie
  */
-public abstract class DAOJDBC<T> {
+public abstract class DAOJDBC<T> extends DAO<T> {
     
     private String dbUrl;
     protected Connection connect;
@@ -32,13 +32,14 @@ public abstract class DAOJDBC<T> {
      * @param obj L'objet à créer
      * @return T une classe donnée
      * @throws IOException Exceptions liées aux entrées/sorties
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
+    @Override
     public abstract T create(T obj) throws IOException, SQLException;
     /**
      * Méthode pour effacer.
      * @param obj l'objet à supprimer
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public abstract void delete(T obj) throws SQLException;
     /**
@@ -46,7 +47,7 @@ public abstract class DAOJDBC<T> {
      * @param obj L'objet à mettre à jour
      * @throws IOException Exception liee aux entrees/sorties
      * @return T une instance de la classe donnée
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public abstract T update(T obj) throws IOException, SQLException;
     /**
@@ -56,7 +57,7 @@ public abstract class DAOJDBC<T> {
      * @throws FileNotFoundException Exception si le fichier n'existe pas
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
-     * @throws SQLException 
+     * @throws SQLException Exception liee a l'acces a la base de donnees
      */
     public abstract T find(int id) throws FileNotFoundException,
     ClassNotFoundException, IOException, SQLException;

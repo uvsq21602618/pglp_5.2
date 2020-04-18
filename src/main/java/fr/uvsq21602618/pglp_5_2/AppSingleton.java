@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import fr.uvsq21602618.pglp_5_2.AbstractDAOFactory.DAOType;
 import fr.uvsq21602618.pglp_5_2.Personnel.Builder;
 /**
  * Singleton contenant le main.
@@ -52,7 +53,7 @@ public enum AppSingleton {
         personnel.create(secretaire);
         personnel.find(1);*/
 
-        NumeroTelephone portable =
+        /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0751624519", 1);
         Builder b = new Builder("SMITH", "John", "secrétaire",
                 LocalDate.of(1964, 8, 25), 1);
@@ -65,7 +66,7 @@ public enum AppSingleton {
         b2.numTelephones(portable2);
         Personnel chefDeService = b2.build();
 
-        DAOJDBC<GroupePersonnels> grPersoJDBC = DAOFactoryJDBC.getGroupePersonnelsDAOJDBC();
+        DAOJDBC<GroupePersonnels> grPersoJDBC = DAOFactoryJDBC.getGroupePersonnelsDAO();
         GroupePersonnels departement =
                 new GroupePersonnels("Departement", 1);
         GroupePersonnels service =
@@ -80,7 +81,15 @@ public enum AppSingleton {
         grPersoJDBC.find(3);
 
         ((GroupePersonnelsDAOJDBC) grPersoJDBC).affichage_table_GroupePersonnels();
-
+        */
+        
+        DAO<Personnel> personnelDAO = AbstractDAOFactory
+                .getFactory(DAOType.JDBC).getPersonnelDAO();
+        System.out.println(personnelDAO.find(4) + "\n");
+        personnelDAO = AbstractDAOFactory
+                .getFactory(DAOType.FILE).getPersonnelDAO();
+        System.out.println(personnelDAO.find(4) + "\n");
+        
 
         /*NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);

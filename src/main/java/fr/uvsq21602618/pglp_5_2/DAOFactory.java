@@ -5,19 +5,18 @@ import java.io.IOException;
  * Classe de la fabrique DAO.
  * @author Nathalie
  */
-public final class DAOFactory {
+public final class DAOFactory extends AbstractDAOFactory {
     /**
      * Constructeur.
      */
-    private DAOFactory() {
-        throw new IllegalStateException("Utility class");
+    public DAOFactory() {
       }
     /**
      * Méthode pour récuperer le DAO de NumeroTelephone.
      * @return le DAO correspondant
      * @throws IOException Exceptions liees aux entrees/sorties
      */
-    public static DAO<NumeroTelephone> getNumeroTelephoneDAO()
+    public DAO<NumeroTelephone> getNumeroTelephoneDAO()
             throws IOException {
         return new NumeroTelephoneDAO();
     }
@@ -26,7 +25,7 @@ public final class DAOFactory {
      * @return le DAO correspondant
      * @throws IOException Exceptions liees aux entrees/sorties
      */
-    public static DAO<Personnel> getPersonnelDAO() throws IOException {
+    public DAO<Personnel> getPersonnelDAO() throws IOException {
         return new PersonnelDAO();
     }
     /**
@@ -34,7 +33,7 @@ public final class DAOFactory {
      * @return le DAO correspondant
      * @throws IOException Exceptions liees aux entrees/sorties
      */
-    public static DAO<GroupePersonnels> getGroupePersonnelsDAO()
+    public DAO<GroupePersonnels> getGroupePersonnelsDAO()
             throws IOException {
         return new GroupePersonnelsDAO();
     }

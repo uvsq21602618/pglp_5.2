@@ -3,12 +3,11 @@ package fr.uvsq21602618.pglp_5_2;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class DAOFactoryJDBC {
+public class DAOFactoryJDBC extends AbstractDAOFactory {
     /**
      * Constructeur.
      */
-    private DAOFactoryJDBC() {
-        throw new IllegalStateException("Utility class");
+    public DAOFactoryJDBC() {
     }
     /**
      * Méthode pour récuperer le DAO de NumeroTelephone.
@@ -16,7 +15,7 @@ public class DAOFactoryJDBC {
      * @throws IOException Exceptions liees aux entrees/sorties
      * @throws SQLException 
      */
-    public static DAOJDBC<NumeroTelephone> getNumeroTelephoneDAOJDBC()
+    public DAOJDBC<NumeroTelephone> getNumeroTelephoneDAO()
             throws IOException, SQLException {
         return new NumeroTelephoneDAOJDBC();
     }
@@ -26,7 +25,7 @@ public class DAOFactoryJDBC {
      * @throws IOException Exceptions liees aux entrees/sorties
      * @throws SQLException 
      */
-    public static DAOJDBC<Personnel> getPersonnelDAOJDBC() throws IOException, SQLException {
+    public DAOJDBC<Personnel> getPersonnelDAO() throws IOException, SQLException {
         return new PersonnelDAOJDBC();
     }
     /**
@@ -35,7 +34,7 @@ public class DAOFactoryJDBC {
      * @throws IOException Exceptions liees aux entrees/sorties
      * @throws SQLException 
      */
-    public static DAOJDBC<GroupePersonnels> getGroupePersonnelsDAOJDBC()
+    public DAOJDBC<GroupePersonnels> getGroupePersonnelsDAO()
             throws IOException, SQLException {
         return new GroupePersonnelsDAOJDBC();
     }

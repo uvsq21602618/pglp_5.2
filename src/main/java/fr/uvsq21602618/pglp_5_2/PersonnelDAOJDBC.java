@@ -18,7 +18,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
     /**
      * Le DAO de numeroTelephone.
      */
-    public static DAOJDBC<NumeroTelephone> numTelJDBC;
+    public DAOJDBC<NumeroTelephone> numTelJDBC;
     /**
      * Constructeur de PersonnelDAOJDBC.
      * @throws SQLException Exception liee a l'acces a la base de donnees
@@ -26,7 +26,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
      */
     public PersonnelDAOJDBC() throws SQLException, IOException {
         super();
-        numTelJDBC = DAOFactoryJDBC.getNumeroTelephoneDAOJDBC();
+        numTelJDBC = new DAOFactoryJDBC().getNumeroTelephoneDAO();
     }
     /**
      * Méthode de création.
@@ -161,7 +161,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
                 + "from personnel"
                 + " where id=" + id);
         if (rs.next() == false) {
-            System.out.println("Il n'y a pas de personnel correspondant a l'id"
+            System.out.println("Il n'y a pas de personnel correspondant a l'id "
                     + id + " dans la table personnel!\n");
             return null;
         }
@@ -182,7 +182,7 @@ public class PersonnelDAOJDBC extends DAOJDBC<Personnel> {
                 + " where id_personnel=" + id);
         while (rs.next()) {
             idNum = rs.getInt("id_numero");
-            numTel = PersonnelDAOJDBC.numTelJDBC.find(idNum);
+            numTel = numTelJDBC.find(idNum);
             if (numTel != null) {
                 b.numTelephones(numTel);
             }

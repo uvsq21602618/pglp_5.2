@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.sql.SQLException;
 import java.time.LocalDate;
 
 import org.junit.Assert;
@@ -49,7 +50,7 @@ public class PersonnelTest {
     public void setUp() throws IOException {
         nomDir = "Personnels";
         dir = new File(nomDir);
-        personnel = DAOFactory.getPersonnelDAO();
+        personnel = new DAOFactory().getPersonnelDAO();
         
         NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651624519", 1);
@@ -126,9 +127,10 @@ public class PersonnelTest {
      * Test pour verifier si la methode create de PersonnelDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void createTest() throws IOException, ClassNotFoundException {       
+    public void createTest() throws IOException, ClassNotFoundException, SQLException {       
         personnel.create(secretaire);
         
         File search = new File(nomDir + "\\" + secretaire.getId() + ".txt");
@@ -150,9 +152,10 @@ public class PersonnelTest {
      * Test pour verifier si la methode delete de PersonnelDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void deleteTest() throws IOException, ClassNotFoundException {      
+    public void deleteTest() throws IOException, ClassNotFoundException, SQLException {      
         NumeroTelephone portable =
                 new NumeroTelephone("portable", "0651724519", 2);
         Builder b = new Builder("SMITH", "Jeanne", "secrétaire",
@@ -175,9 +178,10 @@ public class PersonnelTest {
      * Test pour verifier si la methode update de PersonnelDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void updateTest() throws IOException, ClassNotFoundException {      
+    public void updateTest() throws IOException, ClassNotFoundException, SQLException {      
         File search = new File(nomDir + "\\" + secretaire.getId() + ".txt");
 
         personnel.create(secretaire);
@@ -197,9 +201,10 @@ public class PersonnelTest {
      * Test pour verifier si la methode find de PersonnelDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void findTest() throws IOException, ClassNotFoundException {      
+    public void findTest() throws IOException, ClassNotFoundException, SQLException {      
         File search = new File(nomDir + "\\" + secretaire.getId() + ".txt");
         Personnel expected;
         personnel.create(secretaire);

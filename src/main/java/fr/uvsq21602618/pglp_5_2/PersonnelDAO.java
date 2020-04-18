@@ -28,9 +28,9 @@ public class PersonnelDAO extends DAO<Personnel> {
         File file = new File(nomDir + "\\" + obj.getId() + ".txt");
         if (!dir.exists()) {
             if (dir.mkdir()) {
-                System.out.println("Le dossier est créé!");
+                System.out.println("Le dossier est créé!\n");
             } else {
-                System.out.println("le dossier n'a pas pu être créé!");
+                System.out.println("le dossier n'a pas pu être créé!\n");
             }
         }
         fileOut = new FileOutputStream(file);
@@ -57,10 +57,10 @@ public class PersonnelDAO extends DAO<Personnel> {
                 obj.maj();
                 this.create(obj);
             } else {
-                System.out.println("Le fichier à mettre à jour n'existe pas!");
+                System.out.println("Le fichier à mettre à jour n'existe pas!\n");
             }
         } else {
-            System.out.println("Le dossier contenant le fichier n'existe pas!");
+            System.out.println("Le dossier contenant le fichier n'existe pas!\n");
         }
         return obj;
     }
@@ -75,13 +75,13 @@ public class PersonnelDAO extends DAO<Personnel> {
             File file = new File(nomDir + "\\" + obj.getId() + ".txt");
             if (file.exists()) {
                 file.delete();
-                System.out.println("Le fichier est supprimé!");
+                System.out.println("Le fichier est supprimé!\n");
             } else {
-                System.out.println("Le fichier à supprimer n'existe pas!");
+                System.out.println("Le fichier à supprimer n'existe pas!\n");
             }
         } else {
             System.out.println("Le dossier contenant"
-                    + " le fichier n'existe pas!");
+                    + " le fichier n'existe pas!\n");
         }
     }
     /**
@@ -101,14 +101,14 @@ public class PersonnelDAO extends DAO<Personnel> {
             if (search.exists()) {
                 byte[] fileContent = Files.readAllBytes(search.toPath());
                 deserialized = deserialize(fileContent);
+                Personnel pers = (Personnel) deserialized;
+                pers.print();
+                return pers;
             } else {
-                System.out.println("Le fichier n'existe pas!");
-            }
-            Personnel pers = (Personnel) deserialized;
-            pers.print();
-            return pers;
+                System.out.println("Le fichier n'existe pas!\n");
+            }        
         } else {
-            System.out.println("Le dossier n'existe pas!");
+            System.out.println("Le dossier n'existe pas!\n");
         }
         return null;
     }

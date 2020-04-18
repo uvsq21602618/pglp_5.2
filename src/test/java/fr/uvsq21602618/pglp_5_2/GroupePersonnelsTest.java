@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.sql.SQLException;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,7 +55,7 @@ public class GroupePersonnelsTest {
         g2 = new GroupePersonnels("groupe perso2", 2);
         g3 = new GroupePersonnels("groupe perso3", 3);
         
-        groupePersoDAO = DAOFactory.getGroupePersonnelsDAO();
+        groupePersoDAO = new DAOFactory().getGroupePersonnelsDAO();
     }
     /**
      * Test de la méthode add.
@@ -120,9 +121,10 @@ public class GroupePersonnelsTest {
      * Test pour verifier si la methode create de GroupePersonnelsDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void createTest() throws IOException, ClassNotFoundException {       
+    public void createTest() throws IOException, ClassNotFoundException, SQLException {       
         groupePersoDAO.create(g);
         File search = new File(nomDir + "\\" + g.getId() + ".txt");
         Object deserialized = null;
@@ -143,9 +145,10 @@ public class GroupePersonnelsTest {
      * Test pour verifier si la methode delete de GroupePersonnelsDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void deleteTest() throws IOException, ClassNotFoundException {      
+    public void deleteTest() throws IOException, ClassNotFoundException, SQLException {      
         File search = new File(nomDir + "\\" + g.getId() + ".txt");
         File expected = new File(nomDir + "\\" + g2.getId() + ".txt");  
 
@@ -161,9 +164,10 @@ public class GroupePersonnelsTest {
      * Test pour verifier si la methode update de GroupePersonnelsDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void updateTest() throws IOException, ClassNotFoundException {      
+    public void updateTest() throws IOException, ClassNotFoundException, SQLException {      
         File search = new File(nomDir + "\\" + g.getId() + ".txt");
 
         groupePersoDAO.create(g);
@@ -183,9 +187,10 @@ public class GroupePersonnelsTest {
      * Test pour verifier si la methode find de GroupePersonnelsDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void findTest() throws IOException, ClassNotFoundException {      
+    public void findTest() throws IOException, ClassNotFoundException, SQLException {      
         File search = new File(nomDir + "\\" + g.getId() + ".txt");
         GroupePersonnels expected;
         groupePersoDAO.create(g);

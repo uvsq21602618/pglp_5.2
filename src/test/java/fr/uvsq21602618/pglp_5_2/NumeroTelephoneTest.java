@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.sql.SQLException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +48,7 @@ public class NumeroTelephoneTest {
         dir = new File(nomDir);
         
         tel = new NumeroTelephone("fixe", "0167874973", 2);
-        numTel = DAOFactory.getNumeroTelephoneDAO();
+        numTel = new DAOFactory().getNumeroTelephoneDAO();
     }
     /**
      * Teste le méthode getDescriptif.
@@ -108,9 +110,10 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode create de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void createTest() throws IOException, ClassNotFoundException {       
+    public void createTest() throws IOException, ClassNotFoundException, SQLException {       
         numTel.create(tel);
         
         File search = new File(nomDir + "\\" + tel.getId() + ".txt");
@@ -132,9 +135,10 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode delete de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void deleteTest() throws IOException, ClassNotFoundException {      
+    public void deleteTest() throws IOException, ClassNotFoundException, SQLException {      
         NumeroTelephone tel2 = new NumeroTelephone("fixe", "0167874963", 3);
         File search = new File(nomDir + "\\" + tel.getId() + ".txt");
         File expected = new File(nomDir + "\\" + tel2.getId() + ".txt");  
@@ -151,9 +155,10 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode update de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void updateTest() throws IOException, ClassNotFoundException {      
+    public void updateTest() throws IOException, ClassNotFoundException, SQLException {      
         File search = new File(nomDir + "\\" + tel.getId() + ".txt");
         NumeroTelephone tel2 = new NumeroTelephone("newDescriptif", "newNumero", 2);
 
@@ -174,9 +179,10 @@ public class NumeroTelephoneTest {
      * Test pour verifier si la methode find de NumeroTelephoneDAO fonctionne.
      * @throws IOException Exception liee aux entrees/sorties
      * @throws ClassNotFoundException Exception si la classe n'existe pas
+     * @throws SQLException 
      */
     @Test
-    public void findTest() throws IOException, ClassNotFoundException {      
+    public void findTest() throws IOException, ClassNotFoundException, SQLException {      
         File search = new File(nomDir + "\\" + tel.getId() + ".txt");
         NumeroTelephone expected;
         numTel.create(tel);

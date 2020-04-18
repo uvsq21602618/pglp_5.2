@@ -18,7 +18,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
     /**
      * Le DAO de Personnel.
      */
-    public static DAOJDBC<Personnel> persoJDBC;
+    public DAOJDBC<Personnel> persoJDBC;
     /**
      * Constructeur de GroupePersonnelsDAOJDBC.
      * @throws SQLException Exception liee a l'acces a la base de donnees
@@ -26,7 +26,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
      */
     public GroupePersonnelsDAOJDBC() throws SQLException, IOException {
         super();
-        persoJDBC = DAOFactoryJDBC.getPersonnelDAOJDBC();
+        persoJDBC = new DAOFactoryJDBC().getPersonnelDAO();
     }
     /**
      * Méthode de création.
@@ -171,7 +171,7 @@ public class GroupePersonnelsDAOJDBC extends DAOJDBC<GroupePersonnels> {
                 + " where id_groupe= " + id);
         while (rs.next()) {
             idComp = rs.getInt("id_personnel");
-            p = GroupePersonnelsDAOJDBC.persoJDBC.find(idComp);
+            p = persoJDBC.find(idComp);
             if (p != null) {
                 search.add(p);
             }
