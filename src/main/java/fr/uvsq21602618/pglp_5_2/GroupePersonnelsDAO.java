@@ -78,7 +78,7 @@ public class GroupePersonnelsDAO extends DAO<GroupePersonnels> {
             if (file.exists()) {
                 boolean test = file.delete();
                 if (test) {
-                    obj.maj();
+                    this.delete(obj);
                     this.create(obj);
                 } else {
                     System.out.println("Echec de la mise a jour du fichier!");

@@ -129,12 +129,4 @@ public class NumeroTelephone implements Serializable {
     public void setId(final int id2) {
         this.id = id2;
     }
-    /**
-     * La methode pour mettre a jour l'information.
-     */
-    public void maj() {
-        this.setDescriptif("newDescriptif");
-        this.setNumero("newNumero");
-        System.out.println("La mise a jour a eu lieu!");
-    }
 }

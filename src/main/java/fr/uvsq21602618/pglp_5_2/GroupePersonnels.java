@@ -158,10 +158,4 @@ public class GroupePersonnels implements Composant, Serializable {
     public List<Composant> getChildren() {
         return Collections.unmodifiableList(this.children);
     }
-    /**
-     * Méthode pour la mise à jour.
-     */
-    public void maj() {
-       System.out.println("Maj faites!");
-    }
 }

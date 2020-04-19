@@ -274,10 +274,4 @@ public final class Personnel implements Composant, Serializable {
                 + this.fonction + "\ndate de naissance: "
                 + this.dateNaissance + "\n");
     }
-    /**
-     * La methode pour mettre a jour l'information.
-     */
-    public void maj() {
-        System.out.println("La mise a jour a eu lieu!");
-    }
 }
